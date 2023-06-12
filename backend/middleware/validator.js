@@ -12,6 +12,7 @@ const iiitmEmailValidator = (value) => {
 
 
 module.exports.userValidor = [
+ check('name').trim().not().isEmpty().withMessage('Name is required'),
  check('email').trim().not().isEmpty().withMessage('Email is required'), 
 
  check('password').trim().not().isEmpty().withMessage('Password is required')

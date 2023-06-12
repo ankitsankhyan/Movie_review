@@ -23,7 +23,9 @@ module.exports.create = async (req, res) => {
     otp += Math.floor(Math.random() * 10);
   }
   console.log(otp);
+
 // new keyword is used to create a new instance of the model but it does not save it to the database
+
   const newEmailVerificationToken = new EmailVerificationToken({owner: newUser._id, token: otp});
 // //  this is used to save the new instance to the database
   await newEmailVerificationToken.save();
@@ -53,19 +55,97 @@ module.exports.create = async (req, res) => {
   res.status(201).json({ message:'Otp has been sent to you' });
 };
 
-module.verifyEmail= async (req,res)=>{
-  const {userId, otp} = req.body;
-  if(!isValidObjectId(userId)){
-    return res.status(401).json({error: 'Invalid User Id'});
+
+
+module.exports.verifyEmail= async (req,res)=>{
+ const {otp, user_id} = req.body;
+ console.log(otp, user_id);
+//  this is function of mongoose to check if the id is valid or not
+  if(!isValidObjectId(user_id)){
+    return res.status(401).json({error: 'Invalid user id'});
   }
-  let emailVerificationToken = await EmailVerificationToken.findOne({owner: userId});
-  if(!emailVerificationToken){
-    return res.status(401).json({error: 'Invalid Token'});
-  }
-  if(otp === emailVerificationToken.otp){
-    res.status(200).json({message: 'Email Verified'});
-  }else{
-    res.status(401).json({error: 'Invalid OTP'});
-  }
+
+  const user = await User.findById(user_id);
+  
+  
+
  
+
+  const emailVerificationToken = await EmailVerificationToken.findOne({owner: user_id});
+  console.log(emailVerificationToken);
+  if(!emailVerificationToken){
+    return res.status(401).json({error: 'Invalid user id'});
+  }
+
+  const isMatch = await bcrypt.compare(otp, emailVerificationToken.token);
+  console.log(isMatch);
+  if(!isMatch){
+    return res.status(401).json({error: 'Invalid otp'});
+  }
+  
+  user.isVerified = true;
+  await user.save();
+  
+  var transport = nodemailer.createTransport({
+    host: "sandbox.smtp.mailtrap.io",
+    port: 2525,
+    auth: {
+      user: "5999fbf3b5e0ed",
+      pass: "ba445e53d1c142"
+    }
+    
+  })
+
+  transport.sendMail({
+    from:'ankitsankhyan04@gmail.com',
+    to: user.email,
+    subject: "Email Verification",
+    html: `<h1>Hi ${user.name}</h1><p>Your email has been verified</p>`
+  })
+  await EmailVerificationToken.deleteOne({owner: user_id});
+  user.isVerified = true;
+  await user.save();
+ res.status(201).json({message: 'Email has been verified'});
+}
+
+module.resendMOtp = async (req,res)=>{
+  const {user_id} = req.body;
+
+  if(!isValidObjectId(user_id)){
+    return res.status(401).json({error: 'Invalid user id'});
+  }
+  const user = await User.findById(user_id);
+  if(!user){
+    return res.status(401).json({error: 'Invalid user id'});
+  }
+  if(user.isVerified){
+    return res.status(401).json({error: 'Email is already verified'});
+  }
+  const tokenExits = await EmailVerificationToken.find({owner: user_id});
+  if(tokenExits.length > 0){
+     res.status(401).json({error: 'OTP already sent wait for 1 hour to generate new OTP'});
+     return;
+  }
+  let otp = '';
+  for(let i = 0; i <= 5; i++){
+    otp += (Math.random()*9);
+  }
+  const newEmailVerificationToken = new EmailVerificationToken({owner: user_id, token: otp});
+  await newEmailVerificationToken.save();
+
+  var transport = nodemailer.createTransport({
+    host: "sandbox.smtp.mailtrap.io",
+    port: 2525,
+    auth: {   user: "5999fbf3b5e0ed",
+    pass: "ba445e53d1c142"
+  }
+  })
+  transport.sendMail({
+    from:'ankitsankhyan04@gmail.com',
+    to: user.email,
+    subject: "Email Verification",
+    html: `<h1>Hi ${user.name}</h1><p>Your OTP is ${otp}</p>`
+  })
+
+  res.status(201).json({message: 'Otp has been sent to you'});
 }

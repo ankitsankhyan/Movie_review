@@ -22,9 +22,10 @@ const emailVerificationTokenSchema = new mongoose.Schema({
 });
 // arrow function don't have this keyword and hence don't work here
 emailVerificationTokenSchema.pre("save", async function (next) {
+    console.log('running');
     if (this.isModified("token")) {
 // Note this 10 means how exintensive the hashing should be but it takes more time
-        this.password = await bcrypt.hash(this.token, 10);
+        this.token = await bcrypt.hash(this.token, 10);
     }
 
     next();
