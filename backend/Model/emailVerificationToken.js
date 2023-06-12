@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const bcrypt = require('bcryptjs');
 const emailVerificationTokenSchema = new mongoose.Schema({
 
     owner:{
@@ -23,7 +24,7 @@ const emailVerificationTokenSchema = new mongoose.Schema({
 emailVerificationTokenSchema.pre("save", async function (next) {
     if (this.isModified("token")) {
 // Note this 10 means how exintensive the hashing should be but it takes more time
-        this.password = await bcrypt.hash(this.password, 10);
+        this.password = await bcrypt.hash(this.token, 10);
     }
 
     next();

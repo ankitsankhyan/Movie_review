@@ -1,6 +1,11 @@
 const express = require('express');
 const app = express();
+app.use(express.json());
+const routes = require('./routes/index');
+// this will parse the data to the json 
+
 const db = require('./config/db');
 const port = 5000;
-app.get('/', (req, res) => res.send('Hello World!'));
+
+app.use('/', routes);
 app.listen(port, () => console.log(`Listening on port ${port}`));
