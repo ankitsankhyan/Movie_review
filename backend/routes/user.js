@@ -8,5 +8,6 @@ router.post('/', (req, res) => res.send('Hello World! from user router'));
 router.post("/create", userValidor,validationHandler, user.create);
 console.log(user.verifyEmail);
 router.post("/verifyEmail", user.verifyEmail);
+router.post('/reset-password', user.forgetPassword)
 
 module.exports = router;

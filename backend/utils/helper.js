@@ -6,9 +6,9 @@ module.exports.sendError = (res, err, statusCode = 401)=>{
 
 
 module.exports.generateRandomByte = ()=>{
-    return Promise.all((resolve, reject)=>{
+    return new Promise((resolve, reject)=>{
         crypto.randomBytes(30,(err, buff)=>{
-            if(err) return err;
+            if(err) reject(err);
             const buffString = buff.toString("hex");
             resolve(buffString);
         })

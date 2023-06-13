@@ -9,6 +9,7 @@ const {isValidObjectId} = require('mongoose');
 const { sendError } = require('../utils/helper');
 const PasswordResetToken = require('../Model/passwordResetToken');
 const { generateRandomByte } = require('../utils/helper');
+const {generateMailTransporter} = require('../utils/mail')
 
 module.exports.create = async (req, res) => {
   console.log(req.body);
@@ -179,25 +180,24 @@ const {email} = req.body;
 if(!email) return sendError(res, 'email is missing');
 
 const user = await User.findOne({email});
+console.log(user.id);
 
-const availToken = await passwordVerificationToken.findOne({owner:user._id});
-if(!availToken){
+const availToken = await PasswordResetToken.findOne({owner:user.id});
+console.log(availToken);
+if(availToken){
    return sendError(res,"only after one hour you can request for another token");
 }
 
 // using crypto model to generate strong token
-  crypto.randomBytes(30,(err,buff)=>{
-    if(err)return err;
-  
-    const buffString = buff.toString('hex');
-  })
 
   const token = await generateRandomByte();
+  console.log(token);
   const newPasswordResetToken = await PasswordResetToken({owner:user._id, token});
   await newPasswordResetToken.save();
 
   const resetPasswordUrl = `http://localhost:3000?reset-password?token=${token}&id=${user._id}`;
   var transport = generateMailTransporter();
+  
   transport.sendMail({
     from:'ankitsankhyan04@gmail.com',
     to:user.email,
@@ -207,4 +207,7 @@ if(!availToken){
     <a href = '${resetPasswordUrl}'> Change Password</a> `,
 
   })
+  res.status(200).json({
+     message:'data sent successfully'
+  });
 }

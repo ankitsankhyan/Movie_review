@@ -1,7 +1,7 @@
 const nodemailer = require('nodemailer');
 
 const generateMailTransporter =()=>{
-    nodemailer.createTransport({
+  return  nodemailer.createTransport({
         host: "smtp.mailtrap.io",
         port: 2525,
         auth: {
@@ -18,4 +18,8 @@ const generateOTP = (otp_length = 6) => {
         otp += randomVal;
     }
     return otp;
+}
+
+module.exports = {
+    generateMailTransporter,generateOTP
 }
