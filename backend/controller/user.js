@@ -156,3 +156,33 @@ module.resendMOtp = async (req,res)=>{
 
   res.status(201).json({message: 'Otp has been sent to you'});
 }
+
+
+// function deleteUnverifiedUsers() {
+//   const oneHourAgo = new Date();
+//   oneHourAgo.setHours(oneHourAgo.getHours() - 1);
+
+//   User.deleteMany({ isVerified: false, createdAt: { $lte: oneHourAgo } })
+//     .then((result) => {
+//       console.log(`${result.deletedCount} unverified user(s) deleted.`);
+//     })
+//     .catch((error) => {
+//       console.error('Error deleting unverified users:', error);
+//     });
+// }
+
+// // Run the function every hour (3600000 milliseconds)
+// setInterval(deleteUnverifiedUsers, 3600000);
+
+async function deleteUnverifiedUsers(){
+   const time = new Date();
+   time.setHours(time.getHours()- 1);
+ var users =  await User.deleteMany({isVerified:false, createdAt:{$lte:time}});
+ console.log(users);
+
+
+}
+
+// calling the function after 1 hour
+var id  = setInterval(deleteUnverifiedUsers, 3600000);
+  

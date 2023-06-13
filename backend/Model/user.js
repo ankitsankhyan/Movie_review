@@ -20,6 +20,10 @@ const userSchema = mongoose.Schema({
     isvarified:{
         type: Boolean,
         default: false
+    },
+    createdAt: {
+        type: Date,
+        default: Date.now()
     }
 })
 
