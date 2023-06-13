@@ -2,9 +2,13 @@ const User = require('../Model/user')
 const EmailVerificationToken = require('../Model/emailVerificationToken');
 const bcrypt = require('bcryptjs');
 const nodemailer = require('nodemailer');
+const crypto = require('crypto');
 const mongoose = require('mongoose');
 // this determines the format of user_id
 const {isValidObjectId} = require('mongoose');
+const { sendError } = require('../utils/helper');
+const PasswordResetToken = require('../Model/passwordResetToken');
+const { generateRandomByte } = require('../utils/helper');
 
 module.exports.create = async (req, res) => {
   console.log(req.body);
@@ -115,7 +119,7 @@ module.exports.verifyEmail= async (req,res)=>{
  res.status(201).json({message: 'Email has been verified'});
 }
 
-module.resendMOtp = async (req,res)=>{
+module.exports.resendMOtp = async (req,res)=>{
   const {user_id} = req.body;
 
   if(!isValidObjectId(user_id)){
@@ -169,4 +173,38 @@ async function deleteUnverifiedUsers(){
 
 // calling the function after 1 hour
 var id  = setInterval(deleteUnverifiedUsers, 3600000);
+
+module.exports.forgetPassword = async (req,res)=>{
+const {email} = req.body;
+if(!email) return sendError(res, 'email is missing');
+
+const user = await User.findOne({email});
+
+const availToken = await passwordVerificationToken.findOne({owner:user._id});
+if(!availToken){
+   return sendError(res,"only after one hour you can request for another token");
+}
+
+// using crypto model to generate strong token
+  crypto.randomBytes(30,(err,buff)=>{
+    if(err)return err;
   
+    const buffString = buff.toString('hex');
+  })
+
+  const token = await generateRandomByte();
+  const newPasswordResetToken = await PasswordResetToken({owner:user._id, token});
+  await newPasswordResetToken.save();
+
+  const resetPasswordUrl = `http://localhost:3000?reset-password?token=${token}&id=${user._id}`;
+  var transport = generateMailTransporter();
+  transport.sendMail({
+    from:'ankitsankhyan04@gmail.com',
+    to:user.email,
+    subject:'Reset Password Link',
+    html:`
+    <p> Click here to reset password</p>
+    <a href = '${resetPasswordUrl}'> Change Password</a> `,
+
+  })
+}
