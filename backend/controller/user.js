@@ -2,7 +2,7 @@ const User = require('../Model/user')
 const EmailVerificationToken = require('../Model/emailVerificationToken');
 const bcrypt = require('bcryptjs');
 const nodemailer = require('nodemailer');
-
+const mongoose = require('mongoose');
 // this determines the format of user_id
 const {isValidObjectId} = require('mongoose');
 
@@ -67,21 +67,28 @@ module.exports.verifyEmail= async (req,res)=>{
 
   const user = await User.findById(user_id);
   
-  
-
+  console.log(user);
+ if(!user){
+  res.status(401).json({error: 'USER NOT FOUND'});
+  return;
+ }
  
 
   const emailVerificationToken = await EmailVerificationToken.findOne({owner: user_id});
-  console.log(emailVerificationToken);
+  console.log(emailVerificationToken );
   if(!emailVerificationToken){
-    return res.status(401).json({error: 'Invalid user id'});
+    return res.status(401).json({error: 'USER NOT FOUND'});
   }
 
   const isMatch = await bcrypt.compare(otp, emailVerificationToken.token);
   console.log(isMatch);
   if(!isMatch){
-    return res.status(401).json({error: 'Invalid otp'});
+    await User.findByIdAndDelete(user_id);
+    res.status(404).json({message: 'OTP does not match'});
+    return;
   }
+   
+  
   
   user.isVerified = true;
   await user.save();
