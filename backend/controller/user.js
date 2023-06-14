@@ -180,8 +180,7 @@ const {email} = req.body;
 if(!email) return sendError(res, 'email is missing');
 
 const user = await User.findOne({email});
-console.log(user.id);
-
+if(!user) return sendError(res, 'user not found');
 const availToken = await PasswordResetToken.findOne({owner:user.id});
 console.log(availToken);
 if(availToken){
