@@ -10,7 +10,7 @@ const { sendError } = require('../utils/helper');
 const PasswordResetToken = require('../Model/passwordResetToken');
 const { generateRandomByte } = require('../utils/helper');
 const {generateMailTransporter} = require('../utils/mail')
-
+const jwt = require('jsonwebtoken');
 module.exports.create = async (req, res) => {
   console.log(req.body);
   const { name, email, password } = req.body
@@ -241,13 +241,13 @@ module.exports.resetPassword = async (req,res)=>{
 
 module.exports.signIn = async (req,res)=>{
       const {email,password} = req.body;
-
+      console.log(email,password);
       const user = await User.findOne({email});
       if(!user) return sendError(res, 'user not found');
 
       const matched = await bcrypt.compare(password, user.password);
       if(!matched) return sendError(res, 'invalid credentials');
 
-  const jwt_token = jwt.sign({id:user_id},'ankit ka server',{expiresIn:'30d'});
+  const jwt_token = jwt.sign({id:user._id},process.env.JWT_SECRET,{expiresIn:'30d'});
   return res.status(200).json({id:user._id, name:user.name,email:user.email,jwt_token});
 }

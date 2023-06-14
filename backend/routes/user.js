@@ -12,4 +12,5 @@ router.post("/verifyEmail", user.verifyEmail);
 router.post('/forget-password', user.forgetPassword)
 router.post('/verify-pass-reset-token',isValidPassResetToken,  user.verifyLink);
 router.post('/reset-password',validatePassword,validationHandler,isValidPassResetToken, user.resetPassword);
+router.post('/sign-in', user.signIn);
 module.exports = router;

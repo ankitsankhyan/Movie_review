@@ -5,8 +5,8 @@ const generateMailTransporter =()=>{
         host: "smtp.mailtrap.io",
         port: 2525,
         auth: {
-            user: "5999fbf3b5e0ed",
-            pass: "ba445e53d1c142"
+            user: process.env.Nodemailer_user,
+            pass: process.env.Nodemailer_pass
           }
     })
 }
