@@ -238,3 +238,16 @@ module.exports.resetPassword = async (req,res)=>{
   await PasswordResetToken.findByIdAndDelete(req.resetToken._id);
   res.status(200).json({message: 'password changed successfully'});
 }
+
+module.exports.signIn = async (req,res)=>{
+      const {email,password} = req.body;
+
+      const user = await User.findOne({email});
+      if(!user) return sendError(res, 'user not found');
+
+      const matched = await bcrypt.compare(password, user.password);
+      if(!matched) return sendError(res, 'invalid credentials');
+
+  const jwt_token = jwt.sign({id:user_id},'ankit ka server',{expiresIn:'30d'});
+  return res.status(200).json({id:user._id, name:user.name,email:user.email,jwt_token});
+}
