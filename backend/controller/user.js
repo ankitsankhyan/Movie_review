@@ -211,3 +211,30 @@ if(availToken){
      message:'data sent successfully'
   });
 }
+
+module.exports.verifyLink = (req, res)=>{
+  res.json({ valid: true });
+}
+
+module.exports.resetPassword = async (req,res)=>{
+  const {newPassword, userId} = req.body;
+  if(!newPassword) return sendError(res, 'new password is missing');
+  const user = await User.findById(userId);
+  if(!user) return sendError(res, 'user not found');
+  const matched = await bcrypt.compare(newPassword, user.password);
+  if(matched) return sendError(res, 'new password should not be same as old password');
+
+  user.password = newPassword;
+  await user.save();
+  const transport = generateMailTransporter();
+
+  transport.sendMail({
+    from:'ankitsankhyan04@gmail.com',
+    to:user.email,
+    subject:'Password Changed',
+    html:`${user.name} your password has been changed successfully`
+  });
+// this allow us to create multiple token for the user and delete only that token from where password is changed
+  await PasswordResetToken.findByIdAndDelete(req.resetToken._id);
+  res.status(200).json({message: 'password changed successfully'});
+}

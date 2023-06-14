@@ -9,7 +9,8 @@ const iiitmEmailValidator = (value) => {
     return true;
   };
   
-
+module.exports.validatePassword = [check('newPassword').trim().not().isEmpty().withMessage('Password is required')
+.isLength({min: 6}).withMessage('Password must be at least 6 characters long')];
 
 module.exports.userValidor = [
  check('name').trim().not().isEmpty().withMessage('Name is required'),
