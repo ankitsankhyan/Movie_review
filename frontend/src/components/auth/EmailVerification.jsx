@@ -1,6 +1,6 @@
 import React, { useEffect, useRef } from 'react'
 import Container from '../container'
-import Forminput from '../form/Forminput'
+
 import Title from '../form/title'
 import Submit from '../form/Submit'
 import CustomLink from '../form/CustomLink'
@@ -11,27 +11,42 @@ const Verification = () => {
   const [otp, setOtp] = useState(new Array(otp_length).fill('1'));
   const [activeOtpIndex, setActiveOtpIndex] = useState(0);
   const inputRef = useRef(null);
- 
+  const handleNextInput = (index) => {
+    if(index !== otp_length - 1){
+      setActiveOtpIndex(index + 1);
+    }else{
+      setActiveOtpIndex(0);
+    }
+  }
+
+  const handleprvInput = (index, key) => {
+     if(key === 'Backspace'){
+      const newOtp = [...otp];
+      newOtp[index] = '';
+      setOtp([...newOtp]);
+     }
+    if(index !== 0){
+      setActiveOtpIndex(index - 1);
+      
+    }else{
+      setActiveOtpIndex(otp_length - 1);
+    }
+  }
+
   const handleOtpChange = ({target},index) => {
     // console.log(e.target.value);
     console.log(target.value);
     const {value} = target;
     const newOtp = [...otp];
+    // either we can use this line to restrict size of input 1 digit only or maxlength
     newOtp[index] = value.substr(value.length-1, value.length);
-    console.log(value,target);
+  
     setOtp([...newOtp]);
 
-    if(value !== '' && activeOtpIndex < otp_length-1 ){
-     
-      setActiveOtpIndex(index + 1);
-    }
-  
-
-    
-    
-    // this is wrong way as inputRef is a ojbect not value
-    // inputRef = otp[activeOtpIndex];
-   
+     if(value){
+      handleNextInput(index);
+      
+     }
     
   }
   useEffect(() => {
@@ -56,24 +71,18 @@ const Verification = () => {
            
            onChange={(e)=>handleOtpChange(e,index)}
            maxLength={1}
+          //  this is code to enter one digit only
             onKeyDown={(e)=>{
-             
-              const val = e.key;
-           if(e.key === 'Backspace' && index > 0){
-            otp[activeOtpIndex] = '';
-                  setOtp([...otp]);
-                 
-                  // setActiveOtpIndex(index - 1);
-                
-           }
-           
-          
-           const isNumber = /^\d$/.test(val);
-           if(!isNumber && e.key !== 'Backspace'){
-              e.preventDefault();
-           }
+              if(e.key === 'Backspace'){
+                console.log(index);
+                handleprvInput(index,e.key);
+              }else if(e.key === 'ArrowRight'){
+                handleNextInput(index);
+              }else if(e.key === 'ArrowLeft'){
+                handleprvInput(index);
+              }
             }}
-           className='w-12 h-12 border-2 bg-transparent rounded-sm mx-1 outline-none text-center  border-dark-subtle'   />
+           className='w-12 h-12 border-2 bg-transparent rounded-sm mx-1 outline-none text-center  border-dark-subtle focus:border-white'   />
      
       );
 })}

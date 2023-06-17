@@ -8,6 +8,7 @@ const Forminput = ({label ,type, name, placeholder, className,...rest}) => {
      id={name} 
      name={name}
      className={'peer bg-transparent border border-dark-subtle px-2 py-1 rounded-md transition ' + className}
+     placeholder={placeholder}
      {...rest}/>
 
    <label htmlFor={label}
