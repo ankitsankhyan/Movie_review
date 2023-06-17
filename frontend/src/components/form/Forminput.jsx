@@ -11,7 +11,7 @@ const Forminput = ({label ,type, name, placeholder, className,...rest}) => {
      {...rest}/>
 
    <label htmlFor={label}
-    className='peer-focus:text-white transition'>{label}</label>
+    className={'peer-focus:text-white transition ' + className}>{label}</label>
     </div>
 
   )

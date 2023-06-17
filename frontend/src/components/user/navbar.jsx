@@ -8,7 +8,7 @@ const navbar = () => {
     
     <Container className="p-2">
       <div className="flex flex-row justify-between items-center text-white font-sans text-xl font-semibold">
-        <img src="./logo.png" alt="" className="h-10" />
+        <img src="." alt="" className="h-10 w-20" />
         <ul className="flex justify-between items-center md:gap-2">
           <li>
             <button className="bg-dark-subtle p-1 rounded-sm">
