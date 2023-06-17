@@ -12,8 +12,8 @@ const ConfirmPassword = () => {
       
      
       <form action="" className='flex flex-col items-center bg-primary w-80 px-4 pt-10 pb-4 rounded-md gap-y-2 '>
-      <Title>Enter New Password</Title>
-      <Forminput label = 'New Password' type = 'password' name='Email' placeholder='*********'/>
+      <Title className='mb-9'>Enter New Password</Title>
+      <Forminput label = 'New Password' type = 'password' name='Email' placeholder='*********' />
       <Forminput label = 'confirm Password' type='password' name = 'Email' placeholder='*********'/>
        
         <Submit name = 'Confirm' label = 'submit' className='m-12' />

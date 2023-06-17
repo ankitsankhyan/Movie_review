@@ -54,12 +54,12 @@ const Verification = () => {
   }
   ,[activeOtpIndex])
   return (
-    <div className='bg-secondary w-screen h-screen -z-10 inset-0 fixed flex flex-col-reverse items-center  justify-center gap-1 text-white'>
+    <div className='dark:bg-secondary w-screen h-screen -z-10 inset-0 fixed flex flex-col-reverse items-center  justify-center gap-1 text-white'>
     <Container>
    
       
      
-      <form action="" className='flex flex-col items-center bg-primary w-84 px-4 pt-10 pb-4 rounded-md gap-y-4 '>
+      <form action="" className='flex flex-col items-center dark:bg-primary w-84 px-4 pt-10 pb-4 rounded-md gap-y-4 '>
       <Title>Please Enter OTP to verify your account</Title>
       <p className='text-center text-dark-subtle'>OTP has been sent to your email</p>
       <div>

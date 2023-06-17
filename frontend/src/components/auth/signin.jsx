@@ -4,14 +4,19 @@ import Forminput from '../form/Forminput'
 import Title from '../form/title'
 import Submit from '../form/Submit'
 import CustomLink from '../form/CustomLink'
-const signin = () => {
+
+const Signin = () => {
+  // console.log(ThemeContext);
+    
+      
   return (
-    <div className='bg-secondary w-screen h-screen -z-10 inset-0 fixed flex flex-col-reverse items-center  justify-center gap-1 text-white'>
+
+    <div className='dark:bg-secondary w-screen h-screen -z-10 inset-0 fixed flex flex-col-reverse items-center  justify-center gap-1 text-white'>
     <Container>
    
       
      
-      <form action="" className='flex flex-col items-center bg-primary w-80 px-4 pt-10 pb-4 rounded-md gap-y-2 '>
+      <form action="" className='flex flex-col items-center dark:bg-primary w-80 px-4 pt-10 pb-4 rounded-md gap-y-2 '>
       <Title>Sign in</Title>
       <Forminput label = 'Email' type = 'text' name='Email' />
       <Forminput label = 'Password' type='password' name = 'Email'/>
@@ -33,4 +38,4 @@ const signin = () => {
   )
 }
 
-export default signin
+export default Signin;
