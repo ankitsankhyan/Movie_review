@@ -5,7 +5,8 @@ import Title from '../form/title'
 import Submit from '../form/Submit'
 import CustomLink from '../form/CustomLink'
 import {useState} from 'react'
-
+import { CommonModalClass } from '../../utils/theme'
+import FormContainer from '../form/formContainer'
 const Verification = () => {
   const otp_length = 6
   const [otp, setOtp] = useState(new Array(otp_length).fill('1'));
@@ -54,12 +55,12 @@ const Verification = () => {
   }
   ,[activeOtpIndex])
   return (
-    <div className='dark:bg-secondary w-screen h-screen -z-10 inset-0 fixed flex flex-col-reverse items-center  justify-center gap-1 text-white'>
+   <FormContainer>
     <Container>
    
       
      
-      <form action="" className='flex flex-col items-center dark:bg-primary shadow-xl shadow-secondary/30 dark:shadow-black/30 bg-level-4 w-84 px-4 pt-10 pb-4 rounded-md gap-y-4 '>
+      <form action="" className={  CommonModalClass +' w-84 px-4 pt-10 pb-4 rounded-md gap-y-4 '}>
       <Title>Please Enter OTP to verify your account</Title>
       <p className='text-center text-dark-subtle'>OTP has been sent to your email</p>
       <div>
@@ -82,7 +83,7 @@ const Verification = () => {
                 handleprvInput(index);
               }
             }}
-           className='w-12 h-12 border-2 bg-transparent rounded-sm mx-1 outline-none text-center  border-dark-subtle focus:border-white'   />
+           className='w-12 h-12 border-2 bg-transparent text-black dark:text-white rounded-sm mx-1 outline-none text-center  border-dark-subtle focus:border-white'   />
      
       );
 })}
@@ -101,7 +102,7 @@ const Verification = () => {
           
         
         </Container>
-    </div>
+        </FormContainer>
   )
 }
 

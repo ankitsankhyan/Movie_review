@@ -4,14 +4,17 @@ import Forminput from '../form/Forminput'
 import Title from '../form/title'
 import Submit from '../form/Submit'
 import CustomLink from '../form/CustomLink'
+import { CommonModalClass } from '../../utils/theme'
+
+import FormContainer from '../form/formContainer'
 const ForgotPassword = () => {
   return (
-    <div className='bg-secondary w-screen h-screen -z-10 inset-0 fixed flex flex-col-reverse items-center  justify-center gap-1 text-white'>
+  <FormContainer>
     <Container>
    
       
      
-      <form action="" className='flex flex-col items-center bg-primary w-80 px-4 pt-10 pb-4 rounded-md gap-y-4 '>
+      <form action="" className={ CommonModalClass + ' w-80 px-4 pt-10 pb-4 rounded-md gap-y-4 '}>
       <Title>Please Enter your Email</Title>
       <Forminput label = 'Email' type = 'text' name='Email' className='w-56 py-[0.4rem]'/>
     
@@ -27,7 +30,8 @@ const ForgotPassword = () => {
           
         
         </Container>
-    </div>
+    
+    </FormContainer>
   )
 }
 

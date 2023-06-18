@@ -3,15 +3,16 @@ import Container from '../container'
 import Forminput from '../form/Forminput'
 import Title from '../form/title'
 import Submit from '../form/Submit'
-import CustomLink from '../form/CustomLink'
+import { CommonModalClass } from '../../utils/theme'
+import FormContainer from '../form/formContainer'
 const ConfirmPassword = () => {
   return (
-    <div className='dark:bg-secondary w-screen h-screen -z-10 inset-0 fixed flex flex-col-reverse items-center  justify-center gap-1 text-white'>
+    <FormContainer>
     <Container>
    
       
      
-      <form action="" className='flex flex-col items-center dark:bg-primary w-80 px-4 pt-10 pb-4 rounded-md gap-y-2 '>
+      <form action="" className={ CommonModalClass + ' w-80 px-4 pt-10 pb-4 rounded-md gap-y-2 '}>
       <Title className='mb-9'>Enter New Password</Title>
       <Forminput label = 'New Password' type = 'password' name='Email' placeholder='*********' />
       <Forminput label = 'confirm Password' type='password' name = 'Email' placeholder='*********'/>
@@ -19,15 +20,12 @@ const ConfirmPassword = () => {
         <Submit name = 'Confirm' label = 'submit' className='m-12' />
        
 
-         <div className='flex justify-between w-full'>
-     <CustomLink url='/auth/signin'>Sing in</CustomLink>
-      <CustomLink url='/auth/signup'>Sign up</CustomLink>
-        </div>
+    
       </form>
           
         
         </Container>
-    </div>
+    </FormContainer>
   )
 }
 
