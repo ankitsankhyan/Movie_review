@@ -59,7 +59,7 @@ const Verification = () => {
    
       
      
-      <form action="" className='flex flex-col items-center dark:bg-primary w-84 px-4 pt-10 pb-4 rounded-md gap-y-4 '>
+      <form action="" className='flex flex-col items-center dark:bg-primary shadow-xl shadow-secondary/30 dark:shadow-black/30 bg-level-4 w-84 px-4 pt-10 pb-4 rounded-md gap-y-4 '>
       <Title>Please Enter OTP to verify your account</Title>
       <p className='text-center text-dark-subtle'>OTP has been sent to your email</p>
       <div>

@@ -6,12 +6,12 @@ import Submit from '../form/Submit'
 import CustomLink from '../form/CustomLink'
 const ConfirmPassword = () => {
   return (
-    <div className='bg-secondary w-screen h-screen -z-10 inset-0 fixed flex flex-col-reverse items-center  justify-center gap-1 text-white'>
+    <div className='dark:bg-secondary w-screen h-screen -z-10 inset-0 fixed flex flex-col-reverse items-center  justify-center gap-1 text-white'>
     <Container>
    
       
      
-      <form action="" className='flex flex-col items-center bg-primary w-80 px-4 pt-10 pb-4 rounded-md gap-y-2 '>
+      <form action="" className='flex flex-col items-center dark:bg-primary w-80 px-4 pt-10 pb-4 rounded-md gap-y-2 '>
       <Title className='mb-9'>Enter New Password</Title>
       <Forminput label = 'New Password' type = 'password' name='Email' placeholder='*********' />
       <Forminput label = 'confirm Password' type='password' name = 'Email' placeholder='*********'/>

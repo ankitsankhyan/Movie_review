@@ -6,17 +6,17 @@ import Submit from '../form/Submit'
 import CustomLink from '../form/CustomLink'
 
 const Signin = () => {
-  // console.log(ThemeContext);
+ 
     
       
   return (
 
-    <div className='dark:bg-secondary w-screen h-screen -z-10 inset-0 fixed flex flex-col-reverse items-center  justify-center gap-1 text-white'>
+    <div className='dark:bg-secondary w-screen h-screen -z-10 inset-0 fixed flex flex-col-reverse items-center  justify-center gap-1'>
     <Container>
    
       
      
-      <form action="" className='flex flex-col items-center dark:bg-primary w-80 px-4 pt-10 pb-4 rounded-md gap-y-2 '>
+      <form action="" className='flex flex-col items-center shadow-xl shadow-secondary/30 dark:shadow-black/30 bg-level-4 dark:bg-primary w-80 px-4 pt-10 pb-4 rounded-md gap-y-2 '>
       <Title>Sign in</Title>
       <Forminput label = 'Email' type = 'text' name='Email' />
       <Forminput label = 'Password' type='password' name = 'Email'/>

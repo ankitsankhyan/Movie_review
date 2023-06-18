@@ -12,7 +12,7 @@ const Navbar = () => {
 
   return (
     <>
-    <div className=" bg-white  dark:bg-primary shadow-2xl  shadow-dark-subtle/5 ">
+    <div className ="dark:bg-primary bg-level-5 shadow-2xl  shadow-dark-subtle/5 ">
     
     <Container className="p-2">
       <div className="flex flex-row justify-between items-center text-white font-sans text-xl font-semibold">
