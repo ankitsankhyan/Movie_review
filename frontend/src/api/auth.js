@@ -3,22 +3,15 @@ import client from "./client";
 export const createUser = async(userInfo)=>{
     try{
         const response = await client.post('/user/create', userInfo);
-       
         const data = response.data;
-    return data;
-      
-      
-       
+    return data;       
     }catch(err){
         if(err.response){
             return err.response.data;
         }else{
             return err.message || err;
-
         }
     }
-   
-
 }
 export const verifyEmail = async(userInfo)=>{
     try{
@@ -41,3 +34,16 @@ export const verifyEmail = async(userInfo)=>{
 
 }
 
+export const signin = async(userInfo)=>{
+    try{
+        const response = await client.post('/user/signin', userInfo);
+        const data = response.data;
+        return data;
+    }catch(err){
+        if(err.response){
+            return err.response.data;
+        }else{
+            return err.message || err;
+        }
+    }
+}
