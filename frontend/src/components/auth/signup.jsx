@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import Container from '../container'
 import Forminput from '../form/Forminput'
 import Title from '../form/title'
@@ -7,10 +7,13 @@ import CustomLink from '../form/CustomLink'
 import { CommonModalClass } from '../../utils/theme'
 import FormContainer from '../form/formContainer'
 import { useState } from 'react'
-import axios from 'axios'
-const Signup = () => {
+import { createUser } from '../../api/auth';
+import { useNavigate } from 'react-router-dom'
+import { useNotification } from '../../hooks/theme'
+ const Signup = () => {
   const [userInfo , setUserInfo] = useState({}) 
-
+  const navigate = useNavigate()
+  const updateNotification = useNotification()
   const validateUserInfo = ({ name, email, password }) => {
     const isValidEmail = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
     const isValidName = /^[a-z A-Z]+$/;
@@ -27,15 +30,32 @@ const Signup = () => {
   
     return { ok: true };
   };
+
   var onsubmitHandler = async(e) => {
-   const {ok,error}  = validateUserInfo(userInfo);
-    console.log(userInfo);
-    e.preventDefault();
-    if (!ok) return console.log(error);
-    console.log(userInfo);
-//  const data = await axios.post('/api/auth/signup', userInfo)
-  //  console.log(data);
+    
+    try{
+      e.preventDefault();
+      const {ok,error}  = validateUserInfo(userInfo);
+      console.log(ok,error);
+     
+      if (!ok) {
+        updateNotification('error', error);
+        return;
+      } 
+    
+   const data =   await createUser(userInfo);
+   if(data){
+    updateNotification('success', 'OTP has been sent to your email');
+   }
+   navigate('/auth/verification', { state: data }, { replace: true});
+    }catch(err){
+      console.log(err);
+   
+  
+    }
   }
+
+
   const handleChange = (e) => {
     console.log(e.target.value);
     // this is updating the state
@@ -68,4 +88,5 @@ const Signup = () => {
   )
 }
 
-export default Signup
+
+export default Signup;

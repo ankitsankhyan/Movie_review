@@ -12,6 +12,7 @@ const { generateRandomByte } = require('../utils/helper');
 const {generateMailTransporter} = require('../utils/mail')
 const jwt = require('jsonwebtoken');
 module.exports.create = async (req, res) => {
+  console.log('inside create');
   console.log(req.body);
   const { name, email, password } = req.body
 
@@ -56,8 +57,13 @@ module.exports.create = async (req, res) => {
     }
     console.log('info is' , info);
   });
-
-  res.status(201).json({ message:'Otp has been sent to you' });
+console.log('email sent');
+  res.status(201).json({user:{
+    id: newUser._id,
+    name: newUser.name,
+    email: newUser.email,
+    isVerified: newUser.isVerified
+  }});
 };
 
 
@@ -72,7 +78,7 @@ module.exports.verifyEmail= async (req,res)=>{
 
   const user = await User.findById(user_id);
   
-  console.log(user);
+  
  if(!user){
   res.status(401).json({error: 'USER NOT FOUND'});
   return;
@@ -88,7 +94,7 @@ module.exports.verifyEmail= async (req,res)=>{
   const isMatch = await bcrypt.compare(otp, emailVerificationToken.token);
   console.log(isMatch);
   if(!isMatch){
-    await User.findByIdAndDelete(user_id);
+ 
     res.status(404).json({message: 'OTP does not match'});
     return;
   }
@@ -117,7 +123,8 @@ module.exports.verifyEmail= async (req,res)=>{
   await EmailVerificationToken.deleteOne({owner: user_id});
   user.isVerified = true;
   await user.save();
- res.status(201).json({message: 'Email has been verified'});
+  const jwt_token = jwt.sign({id:user._id},process.env.JWT_SECRET,{expiresIn:'30d'});
+  return res.status(200).json({user:{id:user._id, name:user.name,email:user.email,jwt_token}, message: 'Email verified successfully'});
 }
 
 module.exports.resendMOtp = async (req,res)=>{

@@ -7,11 +7,46 @@ import CustomLink from '../form/CustomLink'
 import {useState} from 'react'
 import { CommonModalClass } from '../../utils/theme'
 import FormContainer from '../form/formContainer'
+import { useLocation , useNavigate} from 'react-router-dom'
+import { verifyEmail } from '../../api/auth'
+import { useNotification } from '../../hooks/theme'
 const Verification = () => {
+  const {state} = useLocation();
+  const updateNotification = useNotification()
+  console.log(state);
+  const navigate = useNavigate()
+  const user = state?.user;
+  console.log(user);
+  useEffect(() => {
+
+  if(!user){
+  
+    navigate('/not-found');
+  }
+  },[state?.data, navigate, user]);
   const otp_length = 6
+  const isValidOTP = (otp) => {
+    const otpRegex = /^[0-9]{6}$/;
+    return otpRegex.test(otp);
+
+  }
+
+  
   const [otp, setOtp] = useState(new Array(otp_length).fill('1'));
   const [activeOtpIndex, setActiveOtpIndex] = useState(0);
   const inputRef = useRef(null);
+  const onsubmitHandler = async(e) => {
+    e.preventDefault();
+    const otpString = otp.join('');
+    if(!isValidOTP(otpString)) return console.log('Invalid OTP');
+    console.log(otpString);
+    const data = await verifyEmail({user_id: user.id, otp: otpString});
+    console.log(data);
+    updateNotification('success', 'Email verified successfully');
+    navigate('/auth/signin', { state: data }, { replace: true});
+  }
+
+
   const handleNextInput = (index) => {
     if(index !== otp_length - 1){
       setActiveOtpIndex(index + 1);
@@ -33,7 +68,7 @@ const Verification = () => {
       setActiveOtpIndex(otp_length - 1);
     }
   }
-
+ 
   const handleOtpChange = ({target},index) => {
     // console.log(e.target.value);
     console.log(target.value);
@@ -60,7 +95,7 @@ const Verification = () => {
    
       
      
-      <form action="" className={  CommonModalClass +' w-84 px-4 pt-10 pb-4 rounded-md gap-y-4 '}>
+      <form onSubmit={onsubmitHandler} className={  CommonModalClass +' w-84 px-4 pt-10 pb-4 rounded-md gap-y-4 '}>
       <Title>Please Enter OTP to verify your account</Title>
       <p className='text-center text-dark-subtle'>OTP has been sent to your email</p>
       <div>

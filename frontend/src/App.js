@@ -19,6 +19,7 @@ function App() {
     <Route path="/auth/verification" element={<EmailVerification/>}/>
     <Route path="/auth/forgot-password" element={<ForgotPassword/>}/>
     <Route path="/auth/confirm-password" element={<ConfirmPassword/>}/>
+    <Route path="*" element={<h1>404 Not Found</h1>}/>
     </Route>
     
   </Routes>
