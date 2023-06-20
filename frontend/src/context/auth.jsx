@@ -1,6 +1,6 @@
-import { createContext } from "react";
+import { createContext, useEffect } from "react";
 import { useState } from "react";
-import { signin } from "../api/auth";
+import { getIsAuth, signin } from "../api/auth";
 export const AuthContext = createContext();
 const defaultAuthInfo = {
     profile:null,
@@ -12,17 +12,41 @@ export const AuthProvider = ({ children }) => {
     const [authInfo, setAuthInfo] = useState({...defaultAuthInfo});
     const handleLogin = async(email, password)=>{
            setAuthInfo({...authInfo, isPending:true});
-        const {error,user} = await signin({email, password});
-          if(error){
+        const {user,error} = await signin({email, password});
+        
+        if(error){
+            console.log(error);
                 setAuthInfo({...authInfo, error, isPending:false});
                 return;
           }
+        if(user){
             setAuthInfo({...authInfo, profile:{...user}, isLoggedIn:true, isPending:false});
-        localStorage.setItem('auth-token', user.token);
+            console.log(user);
+        // console.log(data);
+        localStorage.setItem('auth-token', user.jwt_token);
+        }
+          
 
     };
+
+    const isAuth = async()=>{
+        const token = localStorage.getItem('auth-token');
+        if(!token){
+            return;
+        }
+        setAuthInfo({...authInfo, isPending:true});
+        const {error, user} = await getIsAuth(token);
+        if(error){
+            setAuthInfo({...authInfo, error, isPending:false});
+            return;
+      }
+      setAuthInfo({...authInfo, profile:{...user}, isLoggedIn:true, isPending:false});
+    }
+    useEffect(()=>{
+        isAuth();
+    },[]);
     return (
-        <AuthContext.Provider value={{authInfo, handleLogin}}>{children}</AuthContext.Provider>
+        <AuthContext.Provider value={{authInfo, handleLogin,isAuth}}>{children}</AuthContext.Provider>
     );
 
 };

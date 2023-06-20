@@ -10,7 +10,19 @@ import { useState } from 'react'
 import { createUser } from '../../api/auth';
 import { useNavigate } from 'react-router-dom'
 import { useNotification } from '../../hooks/theme'
+import { useAuth } from '../../hooks/theme'
+
+
+// ##############################################Signup####################################################
+
+
  const Signup = () => {
+  const {authInfo} = useAuth();
+  useEffect(() => {
+    if(authInfo.isLoggedIn){
+      navigate('/', {replace:true});
+    }
+  })
   const [userInfo , setUserInfo] = useState({}) 
   const navigate = useNavigate()
   const updateNotification = useNotification()
@@ -57,7 +69,7 @@ import { useNotification } from '../../hooks/theme'
 
 
   const handleChange = (e) => {
-    console.log(e.target.value);
+      
     // this is updating the state
     setUserInfo({...userInfo, [e.target.name]: e.target.value})
   }

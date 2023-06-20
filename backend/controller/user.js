@@ -103,7 +103,7 @@ module.exports.verifyEmail= async (req,res)=>{
   
   user.isVerified = true;
   await user.save();
-  
+  console.log(user);
   var transport = nodemailer.createTransport({
     host: "sandbox.smtp.mailtrap.io",
     port: 2525,
@@ -246,6 +246,7 @@ module.exports.resetPassword = async (req,res)=>{
 }
 
 module.exports.signIn = async (req,res)=>{
+  console.log(req.body);
       const {email,password} = req.body;
       console.log(email,password);
       const user = await User.findOne({email});
@@ -253,7 +254,7 @@ module.exports.signIn = async (req,res)=>{
 
       const matched = await bcrypt.compare(password, user.password);
       if(!matched) return sendError(res, 'invalid credentials');
-
-  const jwt_token = jwt.sign({id:user._id},process.env.JWT_SECRET,{expiresIn:'30d'});
-  return res.status(200).json({id:user._id, name:user.name,email:user.email,jwt_token});
+  // this is payload
+  const jwt_token = jwt.sign({userId:user._id},process.env.JWT_SECRET,{expiresIn:'30d'});
+  return res.status(200).json({user:{id:user._id, name:user.name,email:user.email,jwt_token}});
 }
