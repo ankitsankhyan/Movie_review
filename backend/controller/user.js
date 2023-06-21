@@ -12,8 +12,8 @@ const { generateRandomByte } = require('../utils/helper');
 const {generateMailTransporter} = require('../utils/mail')
 const jwt = require('jsonwebtoken');
 module.exports.create = async (req, res) => {
-  console.log('inside create');
-  console.log(req.body);
+
+  
   const { name, email, password } = req.body
 
   const oldUser = await User.findOne({ email });
@@ -78,7 +78,7 @@ module.exports.verifyEmail= async (req,res)=>{
 
   const user = await User.findById(user_id);
   
-  
+  console.log(user);
  if(!user){
   res.status(401).json({error: 'USER NOT FOUND'});
   return;
@@ -201,7 +201,7 @@ if(availToken){
   const newPasswordResetToken = await PasswordResetToken({owner:user._id, token});
   await newPasswordResetToken.save();
 
-  const resetPasswordUrl = `http://localhost:3000?reset-password?token=${token}&id=${user._id}`;
+  const resetPasswordUrl = `http://localhost:3000/auth/reset-password?token=${token}&id=${user._id}`;
   var transport = generateMailTransporter();
   
   transport.sendMail({
@@ -255,6 +255,9 @@ module.exports.signIn = async (req,res)=>{
       const matched = await bcrypt.compare(password, user.password);
       if(!matched) return sendError(res, 'invalid credentials');
   // this is payload
+
   const jwt_token = jwt.sign({userId:user._id},process.env.JWT_SECRET,{expiresIn:'30d'});
+  if(!jwt_token) return sendError(res, 'jwt token not generated');
+  console.log(jwt_token);
   return res.status(200).json({user:{id:user._id, name:user.name,email:user.email,jwt_token}});
 }

@@ -1,7 +1,7 @@
 import React from 'react'
 
 const Forminput = ({label ,type, name, placeholder, className,...rest}) => {
-  console.log(type);
+ 
   return (
     <div className='flex flex-col-reverse'>
     <input type={type}

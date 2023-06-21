@@ -4,7 +4,10 @@ const {sendError} = require('../utils/helper');
 const brcrypt = require('bcryptjs');
 exports.isValidPassResetToken = async (req, res, next)=>{
     const {token, userId} = req.body;
-    if(!token.trim() || !isValidObjectId(userId)) return sendError(res, "Invalid request!");
+    if (typeof token !== 'string') {
+        return sendError(res, 400, 'Invalid token');
+      }
+    if(!token || !token.trim() || !isValidObjectId(userId)) return sendError(res, "Invalid request!");
 
     const resetToken = await PasswordResetToken.findOne({owner: userId});
     if(!resetToken) return sendError(res, "Unauthorized access, invalid request!");

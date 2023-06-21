@@ -58,3 +58,29 @@ export const getIsAuth = async(token)=>{
 
    }
 }
+
+export const forgetPassword = async(email)=>{
+ try{
+    const {data} = await client.post('/user/forget-password', {email});
+    return data;
+  }catch(err){
+    if(err.response){
+        return err.response.data;
+    }else{
+        return err.message || err;
+    }
+  }
+}
+
+export const verifyPasswordResetToken = async(token, userId)=>{
+    try{
+       const {data} = await client.post('/user/verify-pass-reset-token', {token, userId});
+       return data;
+     }catch(err){
+       if(err.response){
+           return err.response.data;
+       }else{
+           return err.message || err;
+       }
+     }
+   }

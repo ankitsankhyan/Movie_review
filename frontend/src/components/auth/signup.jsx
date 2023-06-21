@@ -17,12 +17,12 @@ import { useAuth } from '../../hooks/theme'
 
 
  const Signup = () => {
-  const {authInfo} = useAuth();
+  const {authInfo,isAuth} = useAuth();
   useEffect(() => {
     if(authInfo.isLoggedIn){
       navigate('/', {replace:true});
     }
-  })
+  },[isAuth])
   const [userInfo , setUserInfo] = useState({}) 
   const navigate = useNavigate()
   const updateNotification = useNotification()
@@ -48,7 +48,7 @@ import { useAuth } from '../../hooks/theme'
     try{
       e.preventDefault();
       const {ok,error}  = validateUserInfo(userInfo);
-      console.log(ok,error);
+     
      
       if (!ok) {
         updateNotification('error', error);
@@ -59,6 +59,7 @@ import { useAuth } from '../../hooks/theme'
    if(data){
     updateNotification('success', 'OTP has been sent to your email');
    }
+  
    navigate('/auth/verification', { state: data }, { replace: true});
     }catch(err){
       console.log(err);

@@ -1,3 +1,4 @@
+// ###############################################imports##########################################################
 import React, { useEffect, useRef } from 'react'
 import Container from '../container'
 
@@ -10,13 +11,27 @@ import FormContainer from '../form/formContainer'
 import { useLocation , useNavigate} from 'react-router-dom'
 import { verifyEmail } from '../../api/auth'
 import { useNotification } from '../../hooks/theme'
+import { useAuth } from '../../hooks/theme'
+
+
+
+// ##############################################EmailVerification####################################################
+
 const Verification = () => {
-  const {state} = useLocation();
+ 
   const updateNotification = useNotification()
-  console.log(state);
-  const navigate = useNavigate()
+ const {isAuth,authInfo} = useAuth();
+ const navigate = useNavigate()
+ useEffect(() => {
+  if(authInfo.isLoggedIn){
+    navigate('/', {replace:true});
+  }
+},[ authInfo.isLoggedIn, isAuth, navigate])
+ 
+  const {state} = useLocation();
+ 
   const user = state?.user;
-  console.log(user);
+
   useEffect(() => {
 
   if(!user){
@@ -39,10 +54,21 @@ const Verification = () => {
     e.preventDefault();
     const otpString = otp.join('');
     if(!isValidOTP(otpString)) return console.log('Invalid OTP');
-    console.log(otpString);
+   
+    console.log(user.id);
     const data = await verifyEmail({user_id: user.id, otp: otpString});
-    console.log(data);
+    
+    console.log(data.user.jwt_token);
+    if(data.user.jwt_token){
+      localStorage.setItem('auth-token', data.user.jwt_token);
+    }
+      
+      isAuth();
+      // authInfo.isLoggedIn = true;
+
+    
     updateNotification('success', 'Email verified successfully');
+
     navigate('/auth/signin', { state: data }, { replace: true});
   }
 

@@ -6,35 +6,58 @@ import Submit from '../form/Submit'
 import CustomLink from '../form/CustomLink'
 import { CommonModalClass } from '../../utils/theme'
 import FormContainer from '../form/formContainer'
-
+import {CgSpinnerTwoAlt} from 'react-icons/cg'
 import { useAuth } from '../../hooks/theme'
 import { useNavigate } from 'react-router-dom'
+import { useNotification } from '../../hooks/theme'
 const Signin = () => {
-  const navigate = useNavigate();
+  const [loading, setLoading] = useState(true);
 
+  const navigate = useNavigate();
+  const updateNotification = useNotification();
  
   const [userInfo , setUserInfo] = useState({});
   const {handleLogin, authInfo} = useAuth();
   
+ 
+
   useEffect(() => {
+  
     if(authInfo.isLoggedIn){
       navigate('/', {replace:true});
+    }else{
+      setLoading(false);
     }
-  });
+  },[authInfo.isLoggedIn,navigate])
 
   const {isPending} = authInfo;
    const onsubmitHandler = async(e) => {
     e.preventDefault();
-    console.log(userInfo);
-   handleLogin(userInfo.email, userInfo.password);
+  console.log('handle long is called');
+  const {err,success} = await handleLogin(userInfo.email, userInfo.password);
+  if(err){
+      updateNotification('error', err);
+  }
+ console.log(success, err, 'sigin check');
+  if(success){
+    updateNotification('success', 'Login successful');
+  }
   //  navigate('/');
 
  
    }
   const handleChange = (e) => {
-    console.log(userInfo);
+  
     setUserInfo({...userInfo, [e.target.name]:e.target.value});
     
+  }  
+ if(loading){
+    return(
+      <div className='flex justify-center items-center h-screen'>
+        <CgSpinnerTwoAlt className='animate-spin text-5xl'/>
+      </div>
+    )
+
   }
       
   return (
