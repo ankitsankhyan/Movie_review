@@ -74,9 +74,12 @@ export const forgetPassword = async(email)=>{
 
 export const verifyPasswordResetToken = async(token, userId)=>{
     try{
+        console.log(token, userId , 'api');
        const {data} = await client.post('/user/verify-pass-reset-token', {token, userId});
+       console.log(data, 'api');
        return data;
      }catch(err){
+        console.log(err, 'api');
        if(err.response){
            return err.response.data;
        }else{

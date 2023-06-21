@@ -19,33 +19,86 @@ const ConfirmPassword = () => {
   const [isValid, setIsValid] = useState(false);
   const updateNotification = useNotification();
   const [searchParams] = useSearchParams();
-  const token = searchParams.get('token');
-  const id = searchParams.get('id');
+  const token = String(searchParams.get('token'));
+  const id = String(searchParams.get('id'));
   const navigate = useNavigate();
-  console.log(token, id);
+  console.log(token,id);
+  const [password, setPassword] = useState({
+    one:'',
+    two:''
+  });
+  const submitHandler = (e)=>{
+    e.preventDefault();
+    console.log(password);
+    password.one = password.one.trim();
+    password.two = password.two.trim();
+    if(password.one.length === 0){
+      return updateNotification('error','Password cannot be empty');
+    }
+    if(password.one.length < 8){
+      return updateNotification('error','Password must be atleast 8 characters');
+    }
+    if(password.one !== password.two){
+      return updateNotification('error','Password does not match');
+    }
+  }
+  const handleChange = (e)=>{
+    console.log(e.target.name);
+    setPassword({...password,[e.target.name]:e.target.value});
+    console.log(password);
+
+  }
   // isvalid token , isVerifying, !isValid
   useEffect(()=>{
-
-    isValidToken();
-  });
+     
+   isValidToken();
+   
+  },[]);
   const isValidToken = async()=>{
-    console.log(isValid);
+  
     if(!token || !id){ 
       console.log('running ');
       if(isVerifying){
         setIsVerifying(false);
       }
       
-      
+       
       return navigate('/auth/reset-password',{replace:true});
     }
-    const {err, valid} = await verifyPasswordResetToken({token, id});
+    console.log(token,id, 'near post');
+    const {err, valid} = await verifyPasswordResetToken(token, id);
+    setIsVerifying(false);
    
-    if(err) return updateNotification({type:'error', message:err});
-    if(!valid) return navigate('/auth/reset-password',{replace:true});
-    console.log('running and changing state');
-    setIsValid(true);
+  
+    if (err) {
+      navigate("/auth/reset-password", { replace: true });
+      return updateNotification("error", err);
+    }
+
+    if (!valid) {
+      setIsValid(false);
+   
+      return navigate("/auth/reset-password", { replace: true });
+    }else{
+      setIsValid(true);
+      updateNotification("success", "Token verified successfully");
+    }
   }
+
+  if(isVerifying){
+    return (
+      <FormContainer>
+      <Container>
+        <div className="flex space-x-2 items-center">
+        <h1 className='text-4xl font-semibold dark:text-white text-primary'>Please  wait we are verifying token</h1>
+        <CgSpinnerTwoAlt className='animate-spin text-5xl'/>
+        </div>
+  
+        </Container>
+      </FormContainer>
+    )
+   }
+
 
   if(!isValid){
   return(  <FormContainer>
@@ -55,19 +108,7 @@ const ConfirmPassword = () => {
     </FormContainer>
   );
   }
- if(isVerifying){
-  return (
-    <FormContainer>
-    <Container>
-      <div className="flex space-x-2 items-center">
-      <h1 className='text-4xl font-semibold dark:text-white text-primary'>Please  wait we are verifying token</h1>
-      <CgSpinnerTwoAlt className='animate-spin text-5xl'/>
-      </div>
 
-      </Container>
-    </FormContainer>
-  )
- }
   return (
    
     <FormContainer>
@@ -75,18 +116,13 @@ const ConfirmPassword = () => {
    
       
      
-      <form action="" className={ CommonModalClass + ' w-80 px-4 pt-10 pb-4 rounded-md gap-y-2 '}>
+      <form action="" onSubmit={submitHandler} className={ CommonModalClass + ' w-80 px-4 pt-10 pb-4 rounded-md gap-y-2 '}>
       <Title className='mb-9'>Enter New Password</Title>
-      <Forminput label = 'New Password' type = 'password' name='Email' placeholder='*********' />
-      <Forminput label = 'confirm Password' type='password' name = 'Email' placeholder='*********'/>
+      <Forminput onChange = {handleChange} label = 'New Password' type = 'password' name='one'  placeholder='*********' />
+      <Forminput onChange = {handleChange} label = 'confirm Password' type='password' name = 'two' placeholder='*********'/>
        
         <Submit name = 'Confirm' label = 'submit' className='m-12' />
-       
-
-    
       </form>
-          
-        
         </Container>
     </FormContainer>
   )
