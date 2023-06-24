@@ -11,6 +11,7 @@ import { CgSpinnerTwoAlt } from 'react-icons/cg'
 import { verifyPasswordResetToken } from '../../api/auth'
 import { useNotification } from '../../hooks/theme'
 import { useNavigate } from 'react-router-dom'
+import {resetPassword} from '../../api/auth'
 // ###########################  component ##############################
 
 
@@ -27,7 +28,7 @@ const ConfirmPassword = () => {
     one:'',
     two:''
   });
-  const submitHandler = (e)=>{
+  const submitHandler = async(e)=>{
     e.preventDefault();
     console.log(password);
     password.one = password.one.trim();
@@ -41,6 +42,15 @@ const ConfirmPassword = () => {
     if(password.one !== password.two){
       return updateNotification('error','Password does not match');
     }
+ const {message,err} = await resetPassword(password.one,token,id);
+ if(err){
+    return updateNotification('error',err);
+ }
+ if(message){
+    updateNotification('success',message);
+    return navigate('/auth/signin',{replace:true});
+ }
+    
   }
   const handleChange = (e)=>{
     console.log(e.target.name);

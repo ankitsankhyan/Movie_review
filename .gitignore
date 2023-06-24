@@ -1,1 +1,41 @@
-node_modules
+# Ignore node_modules directory
+node_modules/
+
+# Ignore environment-specific files
+.env
+.env.*
+.env.local
+.env.development
+.env.test
+.env.production
+
+# Ignore log files
+*.log
+
+# Ignore build output
+dist/
+build/
+out/
+
+# Ignore IDE and editor-specific files
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.swp
+*.bak
+Thumbs.db
+.DS_Store
+
+# Ignore package-lock.json for npm
+package-lock.json
+
+# Ignore yarn.lock for Yarn
+yarn.lock
+
+# Ignore environment-specific configurations
+/config/*.env
