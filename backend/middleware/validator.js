@@ -22,7 +22,7 @@ module.exports.actorValidator = [
     check('name').trim().not().isEmpty().withMessage('Name is required'),
     check('about').trim().not().isEmpty().withMessage('About is required'),
     check('gender').trim().not().isEmpty().withMessage('Gender is required'),
-    check('avatar').trim().not().isEmpty().withMessage('Avatar is required'),
+   
 ]
 
 

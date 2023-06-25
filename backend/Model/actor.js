@@ -15,10 +15,7 @@ const actorSchema = new mongoose.Schema({
         trim:true,
         required: true
     },
-    isVerified:{
-        type: Boolean,
-        default: false
-    },
+ 
     avatar:{
         type:Object,
         url:String,
