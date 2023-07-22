@@ -1,47 +1,51 @@
-const {check,validationResult} = require('express-validator')
+const { check, validationResult } = require("express-validator");
 
-// making custom validator
-const iiitmEmailValidator = (value) => {
-    if (!value.endsWith('@iiitm.ac.in')) {
-      throw new Error('Invalid email domain');
-    }
-    
-    return true;
-  };
-  
-module.exports.validatePassword = [check('newPassword').trim().not().isEmpty().withMessage('Password is required').isLength({min: 6}).withMessage('Password must be at least 6 characters long')];
+exports.userValidtor = [
+  check("name").trim().not().isEmpty().withMessage("Name is missing!"),
+  check("email").normalizeEmail().isEmail().withMessage("Email is invalid!"),
+  check("password")
+    .trim()
+    .not()
+    .isEmpty()
+    .withMessage("Password is missing!")
+    .isLength({ min: 8, max: 20 })
+    .withMessage("Password must be 8 to 20 characters long!"),
+];
 
-module.exports.userValidor = [
- check('name').trim().not().isEmpty().withMessage('Name is required'),
- check('email').trim().not().isEmpty().withMessage('Email is required'), 
+exports.validatePassword = [
+  check("newPassword")
+    .trim()
+    .not()
+    .isEmpty()
+    .withMessage("Password is missing!")
+    .isLength({ min: 8, max: 20 })
+    .withMessage("Password must be 8 to 20 characters long!"),
+];
 
- check('password').trim().not().isEmpty().withMessage('Password is required')
-.isLength({min: 6}).withMessage('Password must be at least 6 characters long')];
+exports.signInValidator = [
+  check("email").normalizeEmail().isEmail().withMessage("Email is invalid!"),
+  check("password").trim().not().isEmpty().withMessage("Password is missing!"),
+];
 
-module.exports.actorValidator = [
-    check('name').trim().not().isEmpty().withMessage('Name is required'),
-    check('about').trim().not().isEmpty().withMessage('About is required'),
-    check('gender').trim().not().isEmpty().withMessage('Gender is required'),
-   
-]
+exports.actorInfoValidator = [
+  check("name").trim().not().isEmpty().withMessage("Actor name is missing!"),
+  check("about")
+    .trim()
+    .not()
+    .isEmpty()
+    .withMessage("About is a required field!"),
+  check("gender")
+    .trim()
+    .not()
+    .isEmpty()
+    .withMessage("Gender is a required field!"),
+];
 
+exports.validate = (req, res, next) => {
+  const error = validationResult(req).array();
+  if (error.length) {
+    return res.json({ error: error[0].msg });
+  }
 
-module.exports.validationHandler = (req, res, next) => {
-    const errors = validationResult(req).array();
-    if (errors.length > 0) {
-      
-       res.json({error:errors[0].msg});
-       return;
-    }
-
-    next();
-}
-
-// q:see hidden files command
-// q: how to delete .git folder in bash?
-
-
-
-
-
-
+  next();
+};

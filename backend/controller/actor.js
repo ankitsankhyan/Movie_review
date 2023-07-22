@@ -4,7 +4,7 @@ const {sendError, formatActor} = require('../utils/helper');
 
 // secure creates https url
 
-module.exports.create = async(req, res) => {
+module.exports.createActor = async(req, res) => {
 try{
   const file = req.file;
   const {name, about, gender} = req.body;

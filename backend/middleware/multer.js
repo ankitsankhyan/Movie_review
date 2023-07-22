@@ -9,7 +9,7 @@ const fileFilter = (req, file, cb) => {
         
         cb(new Error('only images are allowed'), false);
     }
-    cb(null, true);
+    // cb(null, true);
 
 }
 

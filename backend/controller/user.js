@@ -259,5 +259,5 @@ module.exports.signIn = async (req,res)=>{
   const jwt_token = jwt.sign({userId:user._id},process.env.JWT_SECRET,{expiresIn:'30d'});
   if(!jwt_token) return sendError(res, 'jwt token not generated');
   console.log(jwt_token);
-  return res.status(200).json({user:{id:user._id, name:user.name,email:user.email,jwt_token}});
+  return res.status(200).json({user:{id:user._id, name:user.name,email:user.email,role:user.role,jwt_token}});
 }
