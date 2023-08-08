@@ -3,6 +3,7 @@ const jwt = require('jsonwebtoken');
 const {sendError} = require('../utils/helper');
 exports.isAuth = async (req, res, next) => {
     const token = req.headers?.authorization;
+    console.log(token);
     if(!token) return sendError(res,401,'No token found');
     const jwtToken = token.split(' ')[1];
     if(!jwtToken){ return sendError(res,401,'No token found')};

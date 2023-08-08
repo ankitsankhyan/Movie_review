@@ -34,11 +34,12 @@ const Signin = () => {
    const onsubmitHandler = async(e) => {
     e.preventDefault();
   console.log('handle long is called');
-  const {err,success} = await handleLogin(userInfo.email, userInfo.password);
-  if(err){
-      updateNotification('error', err);
+  const {error,success} = await handleLogin(userInfo.email, userInfo.password);
+  console.log(success, error, 'sigin check');
+  if(error){
+      updateNotification('error', error);
   }
- console.log(success, err, 'sigin check');
+ 
   if(success){
     updateNotification('success', 'Login successful');
   }

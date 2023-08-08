@@ -13,14 +13,14 @@ const {generateMailTransporter} = require('../utils/mail')
 const jwt = require('jsonwebtoken');
 module.exports.create = async (req, res) => {
 
-  
-  const { name, email, password } = req.body
+  console.log(req.body);
+  const { name, email, password,role } = req.body
 
   const oldUser = await User.findOne({ email });
 
   if (oldUser) return res.status(401).json({ error: "This email is already in use!" });
 
-  const newUser = new User({ name, email, password })
+  const newUser = new User({ name, email, password,role })
   await newUser.save()
   // generate 6 digit otp
   let otp = '';
@@ -62,7 +62,8 @@ console.log('email sent');
     id: newUser._id,
     name: newUser.name,
     email: newUser.email,
-    isVerified: newUser.isVerified
+    isVerified: newUser.isVerified,
+    role:role
   }});
 };
 

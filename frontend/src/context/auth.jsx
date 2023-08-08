@@ -19,12 +19,15 @@ export const AuthProvider = ({ children }) => {
     // handle Login
     const handleLogin = async(email, password)=>{
            setAuthInfo({...authInfo, isPending:true});
-        const {user,err} = await signin({email, password});
-        console.log(user, err, 'inside context');
-        if(err){
+           let data =await signin({email, password});
+           console.log(data, 'data from context')
+        const {user,error} = data; 
+        console.log(error);
+        console.log(user, error, 'inside context');
+        if(error){
                
-                setAuthInfo({...authInfo, err, isPending:false});
-                return {err, success:false}
+                setAuthInfo({...authInfo, error, isPending:false});
+                return {error, success:false}
           }
         if(user){
             setAuthInfo({...authInfo, profile:{...user}, isLoggedIn:true, isPending:false});

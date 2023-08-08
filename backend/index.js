@@ -1,7 +1,9 @@
+require("dotenv").config();
 const express = require('express');
+
 const app = express();
 const cors = require('cors');
- require("dotenv").config();
+
  require('express-async-errors');
 const morgan = require('morgan');
 
@@ -20,8 +22,8 @@ app.use((err, req, res, next) => {
 });
 
 const db = require('./config/db');
-
-const port = 5000;
+console.log(process.env.api_key);
+const port = process.env.PORT;
 app.use(morgan('dev'));
 app.use('/api', routes);
 app.use('/*', (req, res) => {

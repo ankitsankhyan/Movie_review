@@ -14,7 +14,7 @@ const {isAuth} = require('../middleware/auth')
 // ##############################  ROUTES  ##########################################
 
 router.post('/', (req, res) => res.send('Hello World! from user router'));
-router.post("/create", userValidtor,validate, user.create);
+router.post("/create",  user.create);
 console.log(user.verifyEmail);
 router.post("/verifyEmail", user.verifyEmail);
 router.post('/forget-password', user.forgetPassword)
@@ -23,7 +23,13 @@ router.post('/reset-password',validatePassword,validate,isValidPassResetToken, u
 router.post('/signin', user.signIn);
 
 router.get('/is-auth',isAuth, (req,res)=>{
-   res.json({user: req.user});
+   res.json({user:{
+      id:req.user._id,
+      name:req.user.name,
+      email:req.user.email,
+      role:req.user.role,
+      isVerified:req.user.isVerified
+   }});
   
      
 })
