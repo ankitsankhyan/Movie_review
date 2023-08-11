@@ -15,5 +15,6 @@ exports.uploadTrailer = async(req, res) => {
 exports.createMovie = async(req, res) => {
    const {file, body} = req;
    const {title, storyline, director, releseDate, status, genres,type, cast, tags, poster, trailer,writer,language} = body;
-   
+   console.log(body);
+   res.send('ok');
 }

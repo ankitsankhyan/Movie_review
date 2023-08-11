@@ -42,6 +42,8 @@ exports.actorInfoValidator = [
     .withMessage("Gender is a required field!"),
 ];
 
+
+// ####################################### MOVIE VALIDATOR ###########################################
 exports.validateMovie = [
   check('title').trim().not().isEmpty().withMessage('Title is missing!'),
   check('storyLine').trim().not().isEmpty().withMessage('Storyline is missing!'),
@@ -58,11 +60,14 @@ exports.validateMovie = [
           // in js in of python same as g
           if(!genres.includes(g)) {throw new Error('Genres is invalid!')}
          }
+         return true;
   }),
   check('tags').isArray({min:1}).withMessage('Tags is missing!').custom((tags)=>{
     for(let tag of tags){
       if(typeof tag !== 'string') {throw new Error('Tags is invalid!')}
     }
+
+    return true;
   })
    ,
   check('cast').isArray().withMessage('Cast is missing!').custom((casts)=>{
@@ -72,6 +77,7 @@ exports.validateMovie = [
       if(typeof cast.leadActor !== 'boolean') throw Error('only boolean value inside leadActor is accepted ')
       
     }
+    return true;
   }),
   check('trailerInfo').isObject().withMessage('Trailer info is missing!').custom((trailerInfo)=>{
   //  Note if url is not valid then URL object will throw error
@@ -86,7 +92,7 @@ exports.validateMovie = [
     }
    
     if(!trailerInfo.public_id?.trim()) throw Error('Trailer public_id is missing!')
-
+   return true;
   }),
   // here ist parameter is not used  and hence we used _ here
 // if now image is present then error is thrown
@@ -94,6 +100,8 @@ exports.validateMovie = [
           if(!req.file)throw Error('Poster is missing!');
   })
 ]
+
+//  ########################################## VALIDATE Data ##########################################
 
 exports.validate = (req, res, next) => {
   const error = validationResult(req).array();
