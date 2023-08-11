@@ -79,19 +79,19 @@ exports.validateMovie = [
     }
     return true;
   }),
-  check('trailerInfo').isObject().withMessage('Trailer info is missing!').custom((trailerInfo)=>{
+  check('trailer').isObject().withMessage('Trailer info is missing!').custom((trailer)=>{
   //  Note if url is not valid then URL object will throw error
     try{
-      const newUrl = new URL(trailerInfo.url);
+      const newUrl = new URL(trailer.url);
       if(!Result.protocol.startsWith('https')) throw new Error('Trailer url is invalid!');
-      let arr = trailerInfo.url.split('/');
+      let arr = trailer.url.split('/');
       const publicId = arr[arr.length-1].split('.')[0];
-      if(publicId !== trailerInfo.public_id) throw new Error('Trailer public_id is invalid!');
+      if(publicId !== trailer.public_id) throw new Error('Trailer public_id is invalid!');
     }catch(err){
       throw new Error('Trailer url is invalid!')
     }
    
-    if(!trailerInfo.public_id?.trim()) throw Error('Trailer public_id is missing!')
+    if(!trailer.public_id?.trim()) throw Error('Trailer public_id is missing!')
    return true;
   }),
   // here ist parameter is not used  and hence we used _ here
