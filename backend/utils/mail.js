@@ -1,25 +1,21 @@
-const nodemailer = require('nodemailer');
+const nodemailer = require('nodemailer')
 
-const generateMailTransporter =()=>{
-  return  nodemailer.createTransport({
+exports.generateOTP = (otp_length = 6) => {
+    let OTP = "";
+    for (let i = 1; i <= otp_length; i++) {
+        const randomVal = Math.round(Math.random() * 9);
+        OTP += randomVal;
+    }
+
+    return OTP;
+};
+
+exports.generateMailTransporter = () =>
+    nodemailer.createTransport({
         host: "smtp.mailtrap.io",
         port: 2525,
         auth: {
-            user: process.env.Nodemailer_user,
-            pass: process.env.Nodemailer_pass
-          }
-    })
-}
-
-const generateOTP = (otp_length = 6) => {
-   var otp = '';
-    for (let i = 1; i <= otp_length; i++) {
-        const randomVal = Math.round(Math.random() * 9);
-        otp += randomVal;
-    }
-    return otp;
-}
-
-module.exports = {
-    generateMailTransporter,generateOTP
-}
+            user: process.env.MAIL_TRAP_USER,
+            pass: process.env.MAIL_TRAP_PASS
+        }
+    });

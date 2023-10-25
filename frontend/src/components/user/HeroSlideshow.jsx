@@ -178,6 +178,7 @@ const SlideShowController = ({ onNextClick, onPrevClick }) => {
 
 const Slide = forwardRef((props, ref) => {
   const { title, id, src, className = "", ...rest } = props;
+  console.log(title);
   return (
     <Link
       ref={ref}

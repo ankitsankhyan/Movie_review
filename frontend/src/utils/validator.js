@@ -10,7 +10,7 @@ export const validateMovie = (movieInfo) => {
     tags,
     cast,
   } = movieInfo;
-
+  console.log(title,'running');
   if (!title.trim()) return { error: "Title is missing!" };
   if (!storyLine.trim()) return { error: "Story line is missing!" };
   if (!language.trim()) return { error: "Language is missing!" };

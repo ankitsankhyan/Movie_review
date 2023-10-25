@@ -1,36 +1,52 @@
 const express = require("express");
-const jwt = require("jsonwebtoken");
-const user = require("../controller/user");
-const {userValidtor} = require("../middleware/validator");
-const {validate} = require("../middleware/validator");
-const {validatePassword} = require('../middleware/validator');
-const {isValidPassResetToken} = require("../middleware/user");
-const { sendError } = require("../utils/helper");
-const User = require("../Model/user");
-const { findById } = require("../Model/emailVerificationToken");
+const {
+  create,
+  verifyEmail,
+  resendEmailVerificationToken,
+  forgetPassword,
+  sendResetPasswordTokenStatus,
+  resetPassword,
+  signIn,
+} = require("../controllers/user");
+const { isAuth } = require("../middlewares/auth");
+const { isValidPassResetToken } = require("../middlewares/user");
+const {
+  userValidtor,
+  validate,
+  validatePassword,
+  signInValidator,
+} = require("../middlewares/validator");
+
 const router = express.Router();
-const {isAuth} = require('../middleware/auth')
 
-// ##############################  ROUTES  ##########################################
+router.post("/create", userValidtor, validate, create);
+router.post("/sign-in", signInValidator, validate, signIn);
+router.post("/verify-email", verifyEmail);
+router.post("/resend-email-verification-token", resendEmailVerificationToken);
+router.post("/forget-password", forgetPassword);
+router.post(
+  "/verify-pass-reset-token",
+  isValidPassResetToken,
+  sendResetPasswordTokenStatus
+);
+router.post(
+  "/reset-password",
+  validatePassword,
+  validate,
+  isValidPassResetToken,
+  resetPassword
+);
+router.get("/is-auth", isAuth, (req, res) => {
+  const { user } = req;
+  res.json({
+    user: {
+      id: user._id,
+      name: user.name,
+      email: user.email,
+      isVerified: user.isVerified,
+      role: user.role,
+    },
+  });
+});
 
-router.post('/', (req, res) => res.send('Hello World! from user router'));
-router.post("/create",  user.create);
-console.log(user.verifyEmail);
-router.post("/verifyEmail", user.verifyEmail);
-router.post('/forget-password', user.forgetPassword)
-router.post('/verify-pass-reset-token',isValidPassResetToken,  user.verifyLink);
-router.post('/reset-password',validatePassword,validate,isValidPassResetToken, user.resetPassword);
-router.post('/signin', user.signIn);
-
-router.get('/is-auth',isAuth, (req,res)=>{
-   res.json({user:{
-      id:req.user._id,
-      name:req.user.name,
-      email:req.user.email,
-      role:req.user.role,
-      isVerified:req.user.isVerified
-   }});
-  
-     
-})
 module.exports = router;

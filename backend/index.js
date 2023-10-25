@@ -1,32 +1,39 @@
+require("express-async-errors");
+const express = require("express");
+const morgan = require("morgan");
+const { errorHandler } = require("./middlewares/error");
+const cors = require("cors");
 require("dotenv").config();
-const express = require('express');
+require("./db");
+const userRouter = require("./routes/user");
+const actorRouter = require("./routes/actor");
+const movieRouter = require("./routes/movie");
+const reviewRouter = require("./routes/review");
+const { handleNotFound } = require("./utils/helper");
 
 const app = express();
-const cors = require('cors');
-
- require('express-async-errors');
-const morgan = require('morgan');
-
 app.use(cors());
 app.use(express.json());
-app.use((err,req,res,next)=>{
-  res.status(500).json({error: err.message});
-})
-const routes = require('./routes/index');
-// this will parse the data to the json 
-app.use((err, req, res, next) => {
-    
-    
-      res.status(403).json({ error: err.message });
-    
-});
+app.use(morgan("dev"));
+app.use("/api/user", userRouter);
+app.use("/api/actor", actorRouter);
+app.use("/api/movie", movieRouter);
+app.use("/api/review", reviewRouter);
+app.use("/*", handleNotFound);
 
-const db = require('./config/db');
-console.log(process.env.api_key);
-const port = process.env.PORT;
-app.use(morgan('dev'));
-app.use('/api', routes);
-app.use('/*', (req, res) => {
-  res.status(401).json({ error: 'url not found' });
+app.use(errorHandler);
+
+// app.post("/sign-in",
+//   (req, res, next) => {
+//     const { email, password } = req.body
+//     if (!email || !password)
+//       return res.json({ error: 'email/ password missing!' })
+//     next()
+//   },
+//   (req, res) => {
+//     res.send("<h1>Hello I am from your backend about</h1>");
+//   });
+
+app.listen(8000, () => {
+  console.log("the port is listening on port 8000");
 });
-app.listen(port, () => console.log(`Listening on port ${port}`));

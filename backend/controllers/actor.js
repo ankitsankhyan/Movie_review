@@ -1,42 +1,24 @@
-const cloudinary = require('../cloud/index')
-const Actor = require("../Model/actor");
-const {sendError, formatActor} = require('../utils/helper');
+const { isValidObjectId } = require("mongoose");
+const Actor = require("../models/actor");
+const {
+  sendError,
+  uploadImageToCloud,
+  formatActor,
+} = require("../utils/helper");
+const cloudinary = require("../cloud");
 
-// secure creates https url
+exports.createActor = async (req, res) => {
+  const { name, about, gender } = req.body;
+  const { file } = req;
 
-module.exports.createActor = async(req, res) => {
-try{
-  const file = req.file;
-  const {name, about, gender} = req.body;
-  const actor = new Actor({
-    name,about, gender
-  });
+  const newActor = new Actor({ name, about, gender });
 
   if (file) {
-    const result = await cloudinary.uploader.upload(file.path, {pages:true});
-   console.log(result);
-    actor.avatar = {
-      url: result.secure_url,
-      public_id: result.public_id
-    };
-   console.log(result);
+    const { url, public_id } = await uploadImageToCloud(file.path);
+    newActor.avatar = { url, public_id };
   }
-  
-  await actor.save();
-  res.status(200).json({
-    message: "Actor created successfully",
-    actor
-  });
-
-   
-}catch(e){
-  console.log(e);
-  // throw new Error(e.message);
-  sendError(res, e, e.error || 500);
-
-}
- 
-  
+  await newActor.save();
+  res.status(201).json({ actor: formatActor(newActor) });
 };
 
 // update
@@ -66,10 +48,8 @@ exports.updateActor = async (req, res) => {
 
   // upload new avatar if there is one!
   if (file) {
-    const { secure_url, public_id } = await cloudinary.uploader.upload(
-      file.path
-    );
-    actor.avatar = { url: secure_url, public_id };
+    const { url, public_id } = await uploadImageToCloud(file.path);
+    actor.avatar = { url, public_id };
   }
 
   actor.name = name;
@@ -77,8 +57,8 @@ exports.updateActor = async (req, res) => {
   actor.gender = gender;
 
   await actor.save();
- 
-  res.status(201).json(formatActor(actor));
+
+  res.status(201).json({ actor: formatActor(actor) });
 };
 
 exports.removeActor = async (req, res) => {
@@ -105,12 +85,15 @@ exports.removeActor = async (req, res) => {
 };
 
 exports.searchActor = async (req, res) => {
-  const { query } = req;
-  const result = await Actor.find({ $text: { $search: `"${query.name}"` } });
+  const { name } = req.query;
+  // const result = await Actor.find({ $text: { $search: `"${query.name}"` } });
+  if (!name.trim()) return sendError(res, "Invalid request!");
+  const result = await Actor.find({
+    name: { $regex: name, $options: "i" },
+  });
 
   const actors = result.map((actor) => formatActor(actor));
-
-  res.json(actors);
+  res.json({ results: actors });
 };
 
 exports.getLatestActors = async (req, res) => {
@@ -129,4 +112,18 @@ exports.getSingleActor = async (req, res) => {
   const actor = await Actor.findById(id);
   if (!actor) return sendError(res, "Invalid request, actor not found!", 404);
   res.json(formatActor(actor));
+};
+
+exports.getActors = async (req, res) => {
+  const { pageNo, limit } = req.query;
+
+  const actors = await Actor.find({})
+    .sort({ createdAt: -1 })
+    .skip(parseInt(pageNo) * parseInt(limit))
+    .limit(parseInt(limit));
+
+  const profiles = actors.map((actor) => formatActor(actor));
+  res.json({
+    profiles,
+  });
 };

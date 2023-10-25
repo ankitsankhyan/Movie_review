@@ -1,17 +1,74 @@
-const express = require('express');
+const express = require("express");
+const {
+  uploadTrailer,
+  createMovie,
+  updateMovieWithoutPoster,
+  updateMovie,
+  removeMovie,
+  getMovies,
+  getMovieForUpdate,
+  searchMovies,
+  getLatestUploads,
+  getSingleMovie,
+  getRelatedMovies,
+  getTopRatedMovies,
+} = require("../controllers/movie");
+const { isAuth, isAdmin } = require("../middlewares/auth");
+const { uploadVideo, uploadImage } = require("../middlewares/multer");
+const {
+  validateMovie,
+  validate,
+  validateTrailer,
+} = require("../middlewares/validator");
+const { parseData } = require("../utils/helper");
 const router = express.Router();
-const {createMovie} = require('../controller/movie');
-const {uploadTrailer} = require('../controller/movie')
-const {isAuth, isAdmin} = require('../middleware/auth');
-const { uploadVideo, uploadImage} = require('../middleware/multer');
-const { validateMovie, validate } = require('../middleware/validator');
-const {parseData} = require('../utils/helper');
-// Note name of attribute same as passed in sigle
-router.post('/upload-trailer', isAuth, isAdmin, uploadVideo.single('video'), uploadTrailer);
-router.post('/create', isAuth, isAdmin, uploadImage.single('poster'),parseData, validateMovie,validate, createMovie);
+
+router.post(
+  "/upload-trailer",
+  isAuth,
+  isAdmin,
+  uploadVideo.single("video"),
+  uploadTrailer
+);
+router.post(
+  "/create",
+  isAuth,
+  isAdmin,
+  uploadImage.single("poster"),
+  parseData,
+  validateMovie,
+  validateTrailer,
+  validate,
+  createMovie
+);
+// router.patch(
+//   "/update-movie-without-poster/:movieId",
+//   isAuth,
+//   isAdmin,
+//   // parseData,
+//   validateMovie,
+//   validate,
+//   updateMovieWithoutPoster
+// );
+router.patch(
+  "/update/:movieId",
+  isAuth,
+  isAdmin,
+  uploadImage.single("poster"),
+  parseData,
+  validateMovie,
+  validate,
+  updateMovie
+);
+router.delete("/:movieId", isAuth, isAdmin, removeMovie);
+router.get("/movies", isAuth, isAdmin, getMovies);
+router.get("/for-update/:movieId", isAuth, isAdmin, getMovieForUpdate);
+router.get("/search", isAuth, isAdmin, searchMovies);
+
+// for normal users
+router.get("/latest-uploads", getLatestUploads);
+router.get("/single/:movieId", getSingleMovie);
+router.get("/related/:movieId", getRelatedMovies);
+router.get("/top-rated", getTopRatedMovies);
 
 module.exports = router;
-
-// IMP NOTE:
-
-// TO SEND A Array from form first convert it into the JSON.stringify() and then send it via form data

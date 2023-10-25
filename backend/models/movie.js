@@ -56,19 +56,17 @@ const movieSchema = mongoose.Schema(
       type: Object,
       url: { type: String, required: true },
       public_id: { type: String, required: true },
-      responsive:[URL],
-      required: true,
+      responsive: [URL],
     },
     trailer: {
       type: Object,
-    //   below we have defined the type of object attribute
       url: { type: String, required: true },
       public_id: { type: String, required: true },
       required: true,
     },
     reviews: [{ type: mongoose.Schema.Types.ObjectId, ref: "Review" }],
     language: {
-      type: String, //we can perdefine type of array of object
+      type: String,
       required: true,
     },
   },
