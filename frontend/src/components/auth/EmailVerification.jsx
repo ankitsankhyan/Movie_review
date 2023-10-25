@@ -1,170 +1,151 @@
-// ###############################################imports##########################################################
-import React, { useEffect, useRef } from 'react'
-import Container from '../container'
+import React, { useEffect, useRef, useState } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
+import { resendEmailVerificationToken, verifyUserEmail } from "../../api/auth";
+import { useAuth, useNotification } from "../../hooks";
+import { commonModalClasses } from "../../utils/theme";
+import Container from "../Container";
+import FormContainer from "../form/FormContainer";
+import Submit from "../form/Submit";
+import Title from "../form/Title";
 
-import Title from '../form/title'
-import Submit from '../form/Submit'
-import CustomLink from '../form/CustomLink'
-import {useState} from 'react'
-import { CommonModalClass } from '../../utils/theme'
-import FormContainer from '../form/formContainer'
-import { useLocation , useNavigate} from 'react-router-dom'
-import { verifyEmail } from '../../api/auth'
-import { useNotification } from '../../hooks/theme'
-import { useAuth } from '../../hooks/theme'
+const OTP_LENGTH = 6;
+let currentOTPIndex;
 
+const isValidOTP = (otp) => {
+  let valid = false;
 
-
-// ##############################################EmailVerification####################################################
-
-const Verification = () => {
- 
-  const updateNotification = useNotification()
- const {isAuth,authInfo} = useAuth();
- const navigate = useNavigate()
- useEffect(() => {
-  if(authInfo.isLoggedIn){
-    navigate('/', {replace:true});
+  for (let val of otp) {
+    valid = !isNaN(parseInt(val));
+    if (!valid) break;
   }
-},[ authInfo.isLoggedIn, isAuth, navigate])
- 
-  const {state} = useLocation();
- 
+
+  return valid;
+};
+
+export default function EmailVerification() {
+  const [otp, setOtp] = useState(new Array(OTP_LENGTH).fill(""));
+  const [activeOtpIndex, setActiveOtpIndex] = useState(0);
+
+  const { isAuth, authInfo } = useAuth();
+  const { isLoggedIn, profile } = authInfo;
+  const isVerified = profile?.isVerified;
+
+  const inputRef = useRef();
+  const { updateNotification } = useNotification();
+
+  const { state } = useLocation();
   const user = state?.user;
 
-  useEffect(() => {
+  const navigate = useNavigate();
 
-  if(!user){
-  
-    navigate('/not-found');
-  }
-  },[state?.data, navigate, user]);
-  const otp_length = 6
-  const isValidOTP = (otp) => {
-    const otpRegex = /^[0-9]{6}$/;
-    return otpRegex.test(otp);
+  const focusNextInputField = (index) => {
+    setActiveOtpIndex(index + 1);
+  };
 
-  }
+  const focusPrevInputField = (index) => {
+    let nextIndex;
+    const diff = index - 1;
+    nextIndex = diff !== 0 ? diff : 0;
+    setActiveOtpIndex(nextIndex);
+  };
 
-  
-  const [otp, setOtp] = useState(new Array(otp_length).fill('1'));
-  const [activeOtpIndex, setActiveOtpIndex] = useState(0);
-  const inputRef = useRef(null);
-  const onsubmitHandler = async(e) => {
-    e.preventDefault();
-    const otpString = otp.join('');
-    if(!isValidOTP(otpString)) return console.log('Invalid OTP');
-   
-    console.log(user.id);
-    const data = await verifyEmail({user_id: user.id, otp: otpString});
-    
-    console.log(data.user.jwt_token);
-    if(data.user.jwt_token){
-      localStorage.setItem('auth-token', data.user.jwt_token);
-    }
-      
-      isAuth();
-      // authInfo.isLoggedIn = true;
-
-    
-    updateNotification('success', 'Email verified successfully');
-
-    navigate('/auth/signin', { state: data }, { replace: true});
-  }
-
-
-  const handleNextInput = (index) => {
-    if(index !== otp_length - 1){
-      setActiveOtpIndex(index + 1);
-    }else{
-      setActiveOtpIndex(0);
-    }
-  }
-
-  const handleprvInput = (index, key) => {
-     if(key === 'Backspace'){
-      const newOtp = [...otp];
-      newOtp[index] = '';
-      setOtp([...newOtp]);
-     }
-    if(index !== 0){
-      setActiveOtpIndex(index - 1);
-      
-    }else{
-      setActiveOtpIndex(otp_length - 1);
-    }
-  }
- 
-  const handleOtpChange = ({target},index) => {
-    // console.log(e.target.value);
-    console.log(target.value);
-    const {value} = target;
+  const handleOtpChange = ({ target }) => {
+    const { value } = target;
     const newOtp = [...otp];
-    // either we can use this line to restrict size of input 1 digit only or maxlength
-    newOtp[index] = value.substr(value.length-1, value.length);
-  
-    setOtp([...newOtp]);
+    newOtp[currentOTPIndex] = value.substring(value.length - 1, value.length);
 
-     if(value){
-      handleNextInput(index);
-      
-     }
-    
-  }
+    if (!value) focusPrevInputField(currentOTPIndex);
+    else focusNextInputField(currentOTPIndex);
+    setOtp([...newOtp]);
+  };
+
+  const handleOTPResend = async () => {
+    const { error, message } = await resendEmailVerificationToken(user.id);
+
+    if (error) return updateNotification("error", error);
+
+    updateNotification("success", message);
+  };
+
+  const handleKeyDown = ({ key }, index) => {
+    currentOTPIndex = index;
+    if (key === "Backspace") {
+      focusPrevInputField(currentOTPIndex);
+    }
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    if (!isValidOTP(otp)) {
+      return updateNotification("error", "invalid OTP");
+    }
+
+    // submit otp
+    const {
+      error,
+      message,
+      user: userResponse,
+    } = await verifyUserEmail({
+      OTP: otp.join(""),
+      userId: user.id,
+    });
+    if (error) return updateNotification("error", error);
+
+    updateNotification("success", message);
+    localStorage.setItem("auth-token", userResponse.token);
+    isAuth();
+  };
+
   useEffect(() => {
     inputRef.current?.focus();
-  }
-  ,[activeOtpIndex])
+  }, [activeOtpIndex]);
+
+  useEffect(() => {
+    if (!user) navigate("/not-found");
+    if (isLoggedIn && isVerified) navigate("/");
+  }, [user, isLoggedIn, isVerified]);
+
+  // if(!user) return null
+
   return (
-   <FormContainer>
-    <Container>
-   
-      
-     
-      <form onSubmit={onsubmitHandler} className={  CommonModalClass +' w-84 px-4 pt-10 pb-4 rounded-md gap-y-4 '}>
-      <Title>Please Enter OTP to verify your account</Title>
-      <p className='text-center text-dark-subtle'>OTP has been sent to your email</p>
-      <div>
-      {otp.map((_,index)=>{
-        return (<input
-           key={index}
-           ref={activeOtpIndex === index ? inputRef : null}
-           value={otp[index] || ''}
-           
-           onChange={(e)=>handleOtpChange(e,index)}
-           maxLength={1}
-          //  this is code to enter one digit only
-            onKeyDown={(e)=>{
-              if(e.key === 'Backspace'){
-                console.log(index);
-                handleprvInput(index,e.key);
-              }else if(e.key === 'ArrowRight'){
-                handleNextInput(index);
-              }else if(e.key === 'ArrowLeft'){
-                handleprvInput(index);
-              }
-            }}
-           className='w-12 h-12 border-2 bg-transparent text-black dark:text-white rounded-sm mx-1 outline-none text-center  border-dark-subtle focus:border-white'   />
-     
-      );
-})}
-      </div>
-   
-    
-       
-        <Submit name = 'submit' label = 'Verify' className='w-full'/>
-       
+    <FormContainer>
+      <Container>
+        <form onSubmit={handleSubmit} className={commonModalClasses}>
+          <div>
+            <Title>Please enter the OTP to verify your account</Title>
+            <p className="text-center dark:text-dark-subtle text-light-subtle">
+              OTP has been sent to your email
+            </p>
+          </div>
 
-         <div className='flex justify-between w-full'>
-         <CustomLink url='/auth/signin'>Sign in</CustomLink>
-      <CustomLink url='/auth/signup'>Sign up</CustomLink>
-        </div>
-      </form>
-          
-        
-        </Container>
-        </FormContainer>
-  )
+          <div className="flex justify-center items-center space-x-4">
+            {otp.map((_, index) => {
+              return (
+                <input
+                  ref={activeOtpIndex === index ? inputRef : null}
+                  key={index}
+                  type="number"
+                  value={otp[index] || ""}
+                  onChange={handleOtpChange}
+                  onKeyDown={(e) => handleKeyDown(e, index)}
+                  className="w-12 h-12 border-2 dark:border-dark-subtle  border-light-subtle darK:focus:border-white focus:border-primary rounded bg-transparent outline-none text-center dark:text-white text-primary font-semibold text-xl spin-button-none"
+                />
+              );
+            })}
+          </div>
+          <div>
+            <Submit value="Verify Account" />
+            <button
+              onClick={handleOTPResend}
+              type="button"
+              className="dark:text-white text-blue-500 font-semibold hover:underline mt-2"
+            >
+              I don't have OTP
+            </button>
+          </div>
+        </form>
+      </Container>
+    </FormContainer>
+  );
 }
-
-export default Verification

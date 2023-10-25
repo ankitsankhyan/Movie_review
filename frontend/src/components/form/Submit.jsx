@@ -1,12 +1,14 @@
-import React from 'react'
-import {ImSpinner3} from 'react-icons/im'
-const Submit = ({label, className,busy}) => {
+import React from "react";
+import { ImSpinner3 } from "react-icons/im";
 
+export default function Submit({ value, busy, type, onClick }) {
   return (
-    <button className={'dark:bg-secondary bg-white border  border-black dark:border-white px-[4.70rem] py-2 rounded-md dark:hover:bg-slate-300 hover:bg-black dark:hover:border-black hover:text-white dark:hover:text-black dark:text-white text-black font-semibold transition ' + className}  type='submit'>
-        {busy?<ImSpinner3 className='animate-spin'/>:label}
-   </button>
-  )
+    <button
+      type={type || "submit"}
+      className="w-full rounded dark:bg-white bg-secondary dark:text-secondary text-white hover:bg-opacity-90 transition font-semibold text-lg cursor-pointer h-10 flex items-center justify-center"
+      onClick={onClick}
+    >
+      {busy ? <ImSpinner3 className="animate-spin" /> : value}
+    </button>
+  );
 }
-
-export default Submit

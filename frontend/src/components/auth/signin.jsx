@@ -1,90 +1,83 @@
-import React,{useEffect, useState} from 'react'
-import Container from '../container'
-import Forminput from '../form/Forminput'
-import Title from '../form/title'
-import Submit from '../form/Submit'
-import CustomLink from '../form/CustomLink'
-import { CommonModalClass } from '../../utils/theme'
-import FormContainer from '../form/formContainer'
-import {CgSpinnerTwoAlt} from 'react-icons/cg'
-import { useAuth } from '../../hooks/theme'
-import { useNavigate } from 'react-router-dom'
-import { useNotification } from '../../hooks/theme'
-const Signin = () => {
-  const [loading, setLoading] = useState(true);
+import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { useAuth, useNotification } from "../../hooks";
+import { isValidEmail } from "../../utils/helper";
+import { commonModalClasses } from "../../utils/theme";
+import Container from "../Container";
+import CustomLink from "../CustomLink";
+import FormContainer from "../form/FormContainer";
+import FormInput from "../form/FormInput";
+import Submit from "../form/Submit";
+import Title from "../form/Title";
+
+const validateUserInfo = ({ email, password }) => {
+  if (!email.trim()) return { ok: false, error: "Email is missing!" };
+  if (!isValidEmail(email)) return { ok: false, error: "Invalid email!" };
+
+  if (!password.trim()) return { ok: false, error: "Password is missing!" };
+  if (password.length < 8)
+    return { ok: false, error: "Password must be 8 characters long!" };
+
+  return { ok: true };
+};
+
+export default function Signin() {
+  const [userInfo, setUserInfo] = useState({
+    email: "",
+    password: "",
+  });
 
   const navigate = useNavigate();
-  const updateNotification = useNotification();
- 
-  const [userInfo , setUserInfo] = useState({});
-  const {handleLogin, authInfo} = useAuth();
-  
- 
+  const { updateNotification } = useNotification();
+  const { handleLogin, authInfo } = useAuth();
+  const { isPending, isLoggedIn } = authInfo;
 
-  useEffect(() => {
-  
-    if(authInfo.isLoggedIn){
-      navigate('/', {replace:true});
-    }else{
-      setLoading(false);
-    }
-  },[authInfo.isLoggedIn,navigate])
+  const handleChange = ({ target }) => {
+    const { value, name } = target;
+    setUserInfo({ ...userInfo, [name]: value });
+  };
 
-  const {isPending} = authInfo;
-   const onsubmitHandler = async(e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-  console.log('handle long is called');
-  const {error,success} = await handleLogin(userInfo.email, userInfo.password);
-  console.log(success, error, 'sigin check');
-  if(error){
-      updateNotification('error', error);
-  }
- 
-  if(success){
-    updateNotification('success', 'Login successful');
-  }
-  //  navigate('/');
+    const { ok, error } = validateUserInfo(userInfo);
 
- 
-   }
-  const handleChange = (e) => {
-  
-    setUserInfo({...userInfo, [e.target.name]:e.target.value});
-    
-  }  
- if(loading){
-    return(
-      <div className='flex justify-center items-center h-screen'>
-        <CgSpinnerTwoAlt className='animate-spin text-5xl'/>
-      </div>
-    )
+    if (!ok) return updateNotification("error", error);
+    handleLogin(userInfo.email, userInfo.password);
+  };
 
-  }
-      
+  // useEffect(() => {
+  //   // we want to move our user to somewhere else
+  //   if (isLoggedIn) navigate("/");
+  // }, [isLoggedIn]);
+
   return (
+    <FormContainer>
+      <Container>
+        <form onSubmit={handleSubmit} className={commonModalClasses + " w-72"}>
+          <Title>Sign in</Title>
+          <FormInput
+            value={userInfo.email}
+            onChange={handleChange}
+            label="Email"
+            placeholder="john@email.com"
+            name="email"
+          />
+          <FormInput
+            value={userInfo.password}
+            onChange={handleChange}
+            label="Password"
+            placeholder="********"
+            name="password"
+            type="password"
+          />
+          <Submit value="Sign in" busy={isPending} />
 
-   <FormContainer>
-    <Container>
-      <form onSubmit={onsubmitHandler} className={ CommonModalClass +' w-80 px-4 pt-10 pb-4 rounded-md gap-y-2 '}>
-      <Title>Sign in</Title>
-      <Forminput label = 'Email' type = 'text' onChange={handleChange} name='email' />
-      <Forminput label = 'Password' type='password' onChange={handleChange} name = 'password'/>
-       
-        <Submit name = 'submit' label = 'submit' className='m-12' busy = {isPending} />
-       
-
-         <div className='flex justify-between w-full'>
-     <CustomLink url='/auth/forgot-password'>Forgot Password</CustomLink>
-      <CustomLink url='/auth/signup'>Sign up</CustomLink>
-        </div>
-      </form>
-          
-        
-        </Container>
+          <div className="flex justify-between">
+            <CustomLink to="/auth/forget-password">Forget password</CustomLink>
+            <CustomLink to="/auth/signup">Sign up</CustomLink>
+          </div>
+        </form>
+      </Container>
     </FormContainer>
-      
-      
-  )
+  );
 }
-
-export default Signin;

@@ -1,105 +1,108 @@
 import client from "./client";
 
-export const createUser = async(userInfo)=>{
-    try{
-        const response = await client.post('/user/create', userInfo);
-        const data = response.data;
-    return data;       
-    }catch(err){
-        if(err.response){
-            return err.response.data;
-        }else{
-            return err.message || err;
-        }
-    }
-}
-export const verifyEmail = async(userInfo)=>{
-    try{
-        const response = await client.post('/user/verifyEmail', userInfo);
-        const data = response.data;
-    return data;       
-    }catch(err){
-        if(err.response){
-            return err.response.data;
-        }else{
-            return err.message || err;
-        }
-    }
-}
+export const createUser = async (userInfo) => {
+  try {
+    const { data } = await client.post("/user/create", userInfo);
+    return data;
+  } catch (error) {
+    const { response } = error;
+    if (response?.data) return response.data;
 
-export const signin = async(userInfo)=>{
-    try{
-        const response = await client.post('/user/signin', userInfo);
-        const data = response.data;
-        return data;
-    }catch(err){
-        if(err.response){
-            return err.response.data;
-        }else{
-            return err.message || err;
-        }
-    }
-}
+    return { error: error.message || error };
+  }
+};
 
-export const getIsAuth = async(token)=>{
-   try{
-    const {data} = await client.get('/user/is-auth',{
-        headers:{ 
-            Authorization:'Bearer '+ token,
-            accept:'application/json'
-        },  
+export const verifyUserEmail = async (userInfo) => {
+  try {
+    const { data } = await client.post("/user/verify-email", userInfo);
+    return data;
+  } catch (error) {
+    const { response } = error;
+    if (response?.data) return response.data;
+
+    return { error: error.message || error };
+  }
+};
+
+export const signInUser = async (userInfo) => {
+  try {
+    const { data } = await client.post("/user/sign-in", userInfo);
+    return data;
+  } catch (error) {
+    const { response } = error;
+    if (response?.data) return response.data;
+
+    return { error: error.message || error };
+  }
+};
+
+export const getIsAuth = async (token) => {
+  try {
+    const { data } = await client.get("/user/is-auth", {
+      headers: {
+        Authorization: "Bearer " + token,
+        accept: "application/json",
+      },
     });
     return data;
-   }catch(err){
-        const {response} = err;
-        if(response?.data) return response.data;
+  } catch (error) {
+    const { response } = error;
+    if (response?.data) return response.data;
 
-        return {error: err.message || err};
-
-   }
-}
-
-export const forgetPassword = async(email)=>{
- try{
-    const {data} = await client.post('/user/forget-password', {email});
-    return data;
-  }catch(err){
-    if(err.response){
-        return err.response.data;
-    }else{
-        return err.message || err;
-    }
+    return { error: error.message || error };
   }
-}
+};
 
-export const verifyPasswordResetToken = async(token, userId)=>{
-    try{
-        console.log(token, userId , 'api');
-       const {data} = await client.post('/user/verify-pass-reset-token', {token, userId});
-       console.log(data, 'api');
-       return data;
-     }catch(err){
-        console.log(err, 'api');
-       if(err.response){
-           return err.response.data;
-       }else{
-           return err.message || err;
-       }
-     }
-   }
+export const forgetPassword = async (email) => {
+  try {
+    const { data } = await client.post("/user/forget-password", { email });
+    return data;
+  } catch (error) {
+    const { response } = error;
+    if (response?.data) return response.data;
 
- export const resetPassword = async(newPassword,token, userId)=>{
-    try{
-    
-       const {data} = await client.post('/user/reset-password', {newPassword,token, userId});
-       
-       return data;
-     }catch(err){
-    
-       if(err.response){
-           return err.response.data;
-       }else{
-           return err.message || err;
-       }
-     }
-   }
+    return { error: error.message || error };
+  }
+};
+
+export const verifyPasswordResetToken = async (token, userId) => {
+  try {
+    const { data } = await client.post("/user/verify-pass-reset-token", {
+      token,
+      userId,
+    });
+    return data;
+  } catch (error) {
+    const { response } = error;
+    if (response?.data) return response.data;
+
+    return { error: error.message || error };
+  }
+};
+
+export const resetPassword = async (passwordInfo) => {
+  try {
+    const { data } = await client.post("/user/reset-password", passwordInfo);
+    return data;
+  } catch (error) {
+    const { response } = error;
+    if (response?.data) return response.data;
+
+    return { error: error.message || error };
+  }
+};
+
+export const resendEmailVerificationToken = async (userId) => {
+  try {
+    const { data } = await client.post(
+      "/user/resend-email-verification-token",
+      { userId }
+    );
+    return data;
+  } catch (error) {
+    const { response } = error;
+    if (response?.data) return response.data;
+
+    return { error: error.message || error };
+  }
+};
