@@ -64,3 +64,9 @@ exports.createMovie = async(req, res) => {
      })
    }
 }
+
+// entire doc change put
+// partial doc change patch
+
+// we will have 2 routes one to update entire doc and one to update partial doc
+

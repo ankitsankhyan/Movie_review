@@ -1,4 +1,5 @@
-const CommonModalClass = "flex flex-col items-center  shadow-secondary/30 dark:shadow-black/30 bg-level-4 dark:bg-primary";
+export const commonModalClasses =
+  "dark:bg-secondary bg-white drop-shadow-lg rounded p-6 space-y-6";
 
-// Note constant can't be exported
-export {CommonModalClass};
+export const commonInputClasses =
+  "w-full bg-transparent outline-none dark:border-dark-subtle border-light-subtle dark:focus:border-white focus:border-primary transition dark:text-white text-primary";
