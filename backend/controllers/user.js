@@ -20,26 +20,26 @@ exports.create = async (req, res) => {
   let OTP = generateOTP();
 
   // store otp inside our db
-  const newEmailVerificationToken = new EmailVerificationToken({
-    owner: newUser._id,
-    token: OTP,
-  });
+  // const newEmailVerificationToken = new EmailVerificationToken({
+  //   owner: newUser._id,
+  //   token: OTP,
+  // });
 
-  await newEmailVerificationToken.save();
+  // await newEmailVerificationToken.save();
 
   // send that otp to our user
 
   var transport = generateMailTransporter();
 
-  transport.sendMail({
-    from: "verification@reviewapp.com",
-    to: newUser.email,
-    subject: "Email Verification",
-    html: `
-      <p>You verification OTP</p>
-      <h1>${OTP}</h1>
-    `,
-  });
+  // transport.sendMail({
+  //   from: "verification@reviewapp.com",
+  //   to: newUser.email,
+  //   subject: "Email Verification",
+  //   html: `
+  //     <p>You verification OTP</p>
+  //     <h1>${OTP}</h1>
+  //   `,
+  // });
 
   res.status(201).json({
     user: {
@@ -95,51 +95,56 @@ exports.verifyEmail = async (req, res) => {
 };
 
 exports.resendEmailVerificationToken = async (req, res) => {
-  const { userId } = req.body;
+  try{
+    const { userId } = req.body;
 
-  const user = await User.findById(userId);
-  if (!user) return sendError(res, "user not found!");
-
-  if (user.isVerified)
-    return sendError(res, "This email id is already verified!");
-
-  const alreadyHasToken = await EmailVerificationToken.findOne({
-    owner: userId,
-  });
-  if (alreadyHasToken)
-    return sendError(
-      res,
-      "Only after one hour you can request for another token!"
-    );
-
-  // generate 6 digit otp
-  let OTP = generateOTP();
-
-  // store otp inside our db
-  const newEmailVerificationToken = new EmailVerificationToken({
-    owner: user._id,
-    token: OTP,
-  });
-
-  await newEmailVerificationToken.save();
-
-  // send that otp to our user
-
-  var transport = generateMailTransporter();
-
-  transport.sendMail({
-    from: "verification@reviewapp.com",
-    to: user.email,
-    subject: "Email Verification",
-    html: `
-      <p>You verification OTP</p>
-      <h1>${OTP}</h1>
-    `,
-  });
-
-  res.json({
-    message: "New OTP has been sent to your registered email accout.",
-  });
+    const user = await User.findById(userId);
+    if (!user) return sendError(res, "user not found!");
+  
+    if (user.isVerified)
+      return sendError(res, "This email id is already verified!");
+  
+    const alreadyHasToken = await EmailVerificationToken.findOne({
+      owner: userId,
+    });
+    if (alreadyHasToken)
+      return sendError(
+        res,
+        "Only after one hour you can request for another token!"
+      );
+  
+    // generate 6 digit otp
+    let OTP = generateOTP();
+  
+    // store otp inside our db
+    const newEmailVerificationToken = new EmailVerificationToken({
+      owner: user._id,
+      token: OTP,
+    });
+  
+    await newEmailVerificationToken.save();
+  
+    // send that otp to our user
+  
+    var transport = generateMailTransporter();
+  
+    transport.sendMail({
+      from: "verification@reviewapp.com",
+      to: user.email,
+      subject: "Email Verification",
+      html: `
+        <p>You verification OTP</p>
+        <h1>${OTP}</h1>
+      `,
+    });
+  
+    res.json({
+      message: "New OTP has been sent to your registered email accout.",
+    });
+  }catch(error){
+    console.log(error);
+  }
+ 
 };
 
 exports.forgetPassword = async (req, res) => {

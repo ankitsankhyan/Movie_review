@@ -98,7 +98,7 @@ exports.searchActor = async (req, res) => {
 
 exports.getLatestActors = async (req, res) => {
   const result = await Actor.find().sort({ createdAt: "-1" }).limit(12);
-
+  // it is just passing those attributes which are required rather than doing select("-attribute") this method is good
   const actors = result.map((actor) => formatActor(actor));
 
   res.json(actors);

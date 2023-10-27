@@ -20,7 +20,7 @@ export default function HeroSlideshow() {
   const fetchLatestUploads = async (signal) => {
     const { error, movies } = await getLatestUploads(signal);
     if (error) return updateNotification("error", error);
-
+    console.log(movies);
     setSlides([...movies]);
     setCurrentSlide(movies[0]);
   };
@@ -120,19 +120,20 @@ export default function HeroSlideshow() {
         {/* current slide */}
         <Slide
           ref={slideRef}
-          title={currentSlide.title}
-          src={currentSlide.poster}
-          id={currentSlide.id}
+          title={currentSlide?.title}
+          src={currentSlide?.poster}
+          id={currentSlide?.id}
         />
 
         {/* cloned slide */}
         <Slide
           ref={clonedSlideRef}
+          
           onAnimationEnd={handleAnimationEnd}
           className="absolute inset-0"
-          src={clonedSlide.poster}
-          title={clonedSlide.title}
-          id={currentSlide.id}
+          src={clonedSlide?.poster}
+          title={clonedSlide?.title}
+          id={currentSlide?.id}
         />
 
         <SlideShowController
