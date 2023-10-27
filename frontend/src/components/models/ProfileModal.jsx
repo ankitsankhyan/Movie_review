@@ -4,12 +4,15 @@ import { useNotification } from "../../hooks";
 import ModalContainer from "./ModalContainer";
 
 export default function ProfileModal({ visible, profileId, onClose }) {
+    console.log(profileId);
   const [profile, setProfile] = useState({});
-
+  
   const { updateNotification } = useNotification();
-
+  
   const fetchActorProfile = async () => {
-    const { error, actor } = await getActorProfile(profileId);
+    const actor = await getActorProfile(profileId);
+    const {error} = actor;
+    console.log(actor);
     if (error) return updateNotification("error", error);
 
     setProfile(actor);
@@ -20,6 +23,7 @@ export default function ProfileModal({ visible, profileId, onClose }) {
   }, [profileId]);
 
   const { avatar, name, about } = profile;
+  
 
   return (
     <ModalContainer visible={visible} onClose={onClose} ignoreContainer>

@@ -56,8 +56,8 @@ export default function HeroSlideshow() {
     count = (count + 1) % slides.length;
     setCurrentSlide(slides[count]);
 
-    clonedSlideRef.current.classList.add("slide-out-to-left");
-    slideRef.current.classList.add("slide-in-from-right");
+    clonedSlideRef.current?.classList.add("slide-out-to-left");
+    slideRef.current?.classList.add("slide-in-from-right");
     updateUpNext(count);
   };
 
@@ -67,8 +67,8 @@ export default function HeroSlideshow() {
     count = (count + slides.length - 1) % slides.length;
     setCurrentSlide(slides[count]);
 
-    clonedSlideRef.current.classList.add("slide-out-to-right");
-    slideRef.current.classList.add("slide-in-from-left");
+    clonedSlideRef.current?.classList.add("slide-out-to-right");
+    slideRef.current?.classList.add("slide-in-from-left");
     updateUpNext(count);
   };
 
@@ -79,8 +79,8 @@ export default function HeroSlideshow() {
       "slide-out-to-right",
       "slide-in-from-left",
     ];
-    slideRef.current.classList.remove(...classes);
-    clonedSlideRef.current.classList.remove(...classes);
+    slideRef.current?.classList.remove(...classes);
+    clonedSlideRef.current?.classList.remove(...classes);
     setClonedSlide({});
     startSlideShow();
   };

@@ -31,9 +31,10 @@ export default function MovieReviews() {
   const { updateNotification } = useNotification();
 
   const fetchReviews = async () => {
-    const { movie, error } = await getReviewByMovie(movieId);
+    const movie = await getReviewByMovie(movieId);
+    const {error} = movie;
     if (error) return updateNotification("error", error);
-
+    console.log(movie);
     setReviews([...movie.reviews]);
     setMovieTitle(movie.title);
   };
@@ -104,7 +105,7 @@ export default function MovieReviews() {
   }, [movieId]);
 
   return (
-    <div className="dark:bg-primary bg-white min-h-screen pb-10">
+    <div className="dark:bg-primary bg-white  dark:text-yellow-400 min-h-screen pb-10">
       <Container className="xl:px-0 px-2 py-8">
         <div className="flex justify-between items-center">
           <h1 className="text-2xl font-semibold dark:text-white text-secondary">
