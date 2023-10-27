@@ -93,7 +93,7 @@ export default function SingleMovie() {
   } = movie;
 
   return (
-    <div className="dark:bg-primary bg-white min-h-screen pb-10">
+    <div className="dark:bg-primary bg-white dark:text-yellow-400 min-h-screen pb-10">
       <Container className="xl:px-0 px-2">
         <video poster={poster} controls src={trailer}></video>
         <div className="flex justify-between">
@@ -134,6 +134,7 @@ export default function SingleMovie() {
 
           <ListWithLabel label="Cast:">
             {cast.map(({ id, profile, leadActor }) => {
+              console.log(profile);
               return leadActor ? (
                 <CustomButtonLink
                   onClick={() => handleProfileClick(profile)}
@@ -155,7 +156,7 @@ export default function SingleMovie() {
             />
           </ListWithLabel>
 
-          <ListWithLabel label="Cast:">
+          <ListWithLabel label="Tags:">
             {genres.map((g) => (
               <CustomButtonLink label={g} key={g} clickable={false} />
             ))}
@@ -165,7 +166,7 @@ export default function SingleMovie() {
             <CustomButtonLink label={type} clickable={false} />
           </ListWithLabel>
 
-          <CastProfiles cast={cast} />
+          <CastProfiles cast={cast} handleProfileClick = {handleProfileClick}/>
           <RelatedMovies movieId={movieId} />
         </div>
       </Container>
@@ -196,7 +197,10 @@ const ListWithLabel = ({ children, label }) => {
   );
 };
 
-const CastProfiles = ({ cast, onProfileClick }) => {
+const CastProfiles = ({ cast, handleProfileClick }) => {
+  
+ 
+
   return (
     <div className="">
       <h1 className="text-light-subtle dark:text-dark-subtle font-semibold text-2xl mb-2">
@@ -213,9 +217,10 @@ const CastProfiles = ({ cast, onProfileClick }) => {
                 className="w-24 h-24 aspect-square object-cover rounded-full"
                 src={profile.avatar}
                 alt=""
+                onClick={() => handleProfileClick(profile)}
               />
 
-              <CustomButtonLink label={profile.name} />
+              <CustomButtonLink label={profile.name} onClick={() => handleProfileClick(profile)}  />
               <span className="text-light-subtle dark:text-dark-subtle text-sm">
                 as
               </span>

@@ -18,6 +18,7 @@ export const addReview = async (movieId, reviewData) => {
 export const getReviewByMovie = async (movieId) => {
   try {
     const { data } = await client(`/review/get-reviews-by-movie/${movieId}`);
+    console.log(data);
     return data;
   } catch (error) {
     return catchError(error);

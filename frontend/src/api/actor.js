@@ -80,6 +80,7 @@ export const getActors = async (pageNo, limit) => {
 export const getActorProfile = async (id) => {
   try {
     const { data } = await client(`/actor/single/${id}`);
+    console.log(data);
     return data;
   } catch (error) {
     return catchError(error);
